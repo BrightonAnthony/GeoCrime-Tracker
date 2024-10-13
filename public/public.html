@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crime Report</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script> <!-- Google Maps API -->
+    <link href="CSS_file/publicform.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container" id="polog-container">
+    <form id="crimeForm">
+        <div class="form-group">
+            <label for="polog-pname"> Name</label>
+            <input type="text" id="polog-pname" placeholder="Enter your Name" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="polog-crimetype">Crime Type</label>
+            <select id="polog-crimetype" required>
+                <option value="">Select Type of Crime</option>
+                <option value="theft">Theft</option>
+                <option value="assault">Assault</option>
+                <option value="burglary">Burglary</option>
+                <option value="fraud">Fraud</option>
+                <option value="vandalism">Vandalism</option>
+                <option value="drugOffense">Drug Offense</option>
+                <option value="domesticViolence">Domestic Violence</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="polog-phoneNo">Phone No</label>
+            <input type="number" id="polog-phoneNo" placeholder="Enter the Phone No" required>
+        </div>
+
+        <!-- <div class="form-group">
+            <label for="polog-date">Date</label>
+            <input type="date" id="polog-date" required>
+        </div>
+        <div class="form-group">
+            <label for="polog-time">Time</label>
+            <input type="time" id="polog-time" required>
+        </div> -->
+
+        <div class="form-group">
+            <label for="polog-video">Video</label>
+            <input type="file" id="polog-video" accept="video/*" capture="environment">
+        </div>
+
+        <div class="form-group">
+            <label for="latitude">Latitude</label>
+            <input type="text" id="latitude" name="latitude" readonly>
+        </div>
+        <div class="form-group">
+            <label for="longitude">Longitude</label>
+            <input type="text" id="longitude" name="longitude" readonly>
+        </div>
+        <div class="form-group">
+            <label for="polog-date">Date</label>
+            <input type="date" id="polog-date" required readonly>
+        </div>
+        <div class="form-group">
+            <label for="polog-time">Time</label>
+            <input type="time" id="polog-time" required readonly>
+        </div>
+        <div class="form-group">
+            <label for="address">Address</label>
+            <input type="text" id="address" name="address" readonly>
+        </div>
+
+        <button type="submit" class="btn">Register</button>
+    </form>
+</div>
+
+<script>
+    // Initialize Google Maps Geocoder
+    const geocoder = new google.maps.Geocoder();
+
+    document.getElementById('polog-video').addEventListener('change', function () {
+        // Check if browser supports Geolocation
+        if (navigator.geolocation) {
+            // Get the current position
+            navigator.geolocation.getCurrentPosition(function (position) {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+
+                // Set latitude and longitude to form fields
+                document.getElementById('latitude').value = latitude;
+                document.getElementById('longitude').value = longitude;
+
+                // Reverse Geocode: Convert Lat/Lng to address
+                const latlng = { lat: latitude, lng: longitude };
+
+                geocoder.geocode({ location: latlng }, function (results, status) {
+                    if (status === 'OK') {
+                        if (results[0]) {
+                            // Set the address field in the form
+                            document.getElementById('address').value = results[0].formatted_address;
+                        } else {
+                            alert('No address found for this location.');
+                        }
+                    } else {
+                        alert('Geocoder failed due to: ' + status);
+                    }
+                });
+
+                // Set the current date and time in their respective fields
+                const now = new Date();
+                document.getElementById('polog-date').value = now.toISOString().split('T')[0]; // YYYY-MM-DD
+                document.getElementById('polog-time').value = now.toTimeString().split(' ')[0]; // HH:MM:SS
+            }, function (error) {
+                alert('Error getting location: ' + error.message);
+            });
+        } else {
+            alert('Geolocation is not supported by this browser.');
+        }
+    });
+</script>
+
+</body>
+</html>

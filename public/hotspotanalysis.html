@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crime Hotspot Analysis</title>
+  <link rel="stylesheet" href="CSS_file/main.css">
+  <!-- Bootstrap CSS -->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-heatmap@0.1.0/dist/leaflet-heatmap.css" />
+
+
+</head>
+<body>
+    <div id="header">
+        <div class="header-center">
+            GeoCrime Tracker
+        </div>
+        <div class="header-right">
+            <i class="bi bi-bell-fill"></i> <!-- Notification Bell Icon -->
+            <i class="bi bi-person-circle"></i></i> <!-- Profile Icon -->
+        </div>
+    </div>
+    
+
+        <!-- Content Wrapper  -->
+        <div class="content">
+            <!-- Sidebar -->
+            <div id="sidebar">
+                <ul>
+                    <li><a href="index.html">Dashboard</a></li><hr>
+                    <li><a href="predictiveanalysis.html">Predictive Crime Analysis</a></li><hr>
+                    <li><a href="hotspotanalysis.html">Crime Hotspot Analysis</a></li><hr>
+                    <li><a href="criminalpattern.html">Criminal Behavior Patterns</a></li><hr>
+                    <li><a href="policeForm.html">Register New Crime</a></li>
+                </ul>
+            </div>
+    
+            <!-- Main Content -->
+            <div class="main-content">
+                <h5 class="text">Crime Hotspot Analysis</h5>
+                <!-- Leaflet Map -->
+                <div id="map"></div>
+                
+            </div>
+        </div>
+    
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<!-- Leaflet Heatmap Plugin -->
+<script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+
+<script>
+    // Initialize the map and set its view
+    var map = L.map('map').setView([19.0760, 72.8777], 11);  // Centered on Mumbai
+
+    // Add OpenStreetMap tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">Brighton</a> contributors'
+    }).addTo(map);
+    //L.marker([19.0760, 72.8777]).addTo(map).bindPopup('Mumbai').openPopup();
+
+    
+
+    // Function to style the GeoJSON layers
+    function style1(feature) {
+        return {
+            color: "#ff7800",
+            
+            weight: 1,
+            opacity: 0.65
+        };
+    }
+
+    function style2(feature) {
+        return {
+            color: "#0057e7",
+            weight: 1,
+            opacity: 0.75
+        };
+    }
+
+    function style3(feature) {
+        return {
+            color: "#005666",
+            weight: 1,
+            opacity: 0.65
+        };
+    }
+
+
+
+
+
+        // Function to bind popup information for each feature
+    function onEachFeature1(feature, layer) {
+        if (feature.properties && feature.properties.Name) {
+            layer.bindPopup("<strong> Station :</strong> " + feature.properties.Name);
+        } else {
+            console.warn('Feature properties not found for layer 1:', feature);
+        }
+    }
+
+    function onEachFeature2(feature, layer) {
+        if (feature.properties && feature.properties.Name) {
+            layer.bindPopup("<strong> Juridiction :</strong> " + feature.properties.Name);
+        } else {
+            console.warn('Feature properties not found for layer 2:', feature);
+        }
+    }
+
+
+    function onEachFeature3(feature, layer) {
+        if (feature.properties && feature.properties.name) {
+            layer.bindPopup("<strong> Crime :</strong> " + feature.properties.name);
+        } else {
+            console.warn('Feature properties not found for layer 3:', feature);
+        }
+    }
+    
+
+
+
+
+    // Create a custom icon with a specific color
+    var customIcon = L.icon({
+        iconUrl: 'pics/redcrime.png',  // Path to custom marker icon image
+        iconSize: [20, 20],    // Icon size
+        iconAnchor: [10, 20] // Point where the icon is anchored (center-bottom)
+    });
+
+    // Use the custom icon in pointToLayer
+    function pointToCustomMarker(feature, latlng) {
+        return L.marker(latlng, { icon: customIcon })
+            .bindPopup(feature.properties.description); // Bind popup with description
+    }
+
+
+
+    // Function to create circle markers for GeoJSON points
+    function pointToCircle(feature, latlng) {
+        return L.circle(latlng, {
+            color: 'red',
+            fillColor: '#f03',
+            fillOpacity: 0.5,
+            radius: 3000 // Adjust the radius as needed
+        }).bindPopup(feature.properties.description); // Bind popup with description
+    }
+
+
+    // Function to create both a custom marker and a circle for the same point
+    function pointToCustomMarkerAndCircle(feature, latlng) {
+        // Create the custom marker
+        var customIcon = L.icon({
+            iconUrl: 'pics/redcrime.png',  // Path to your custom icon
+            iconSize: [20, 20],    // Icon size
+            iconAnchor: [10, 20]    // Adjust the anchor as needed
+        });
+        var marker = L.marker(latlng, { icon: customIcon }).bindPopup(feature.properties.name);
+
+        // Create the circle around the same point
+        var circle = L.circle(latlng, {
+            color: '',
+            fillColor: 'rgb(226, 128, 42)',
+            fillOpacity: 0.5,
+            radius: 1000 // Adjust radius as needed
+        });
+
+        // Add both the marker and the circle to a LayerGroup
+        return L.layerGroup([marker, circle]);
+    }
+
+
+
+
+    // Define GeoJSON layers
+    var geojsonLayer1 = L.geoJSON(null, {
+        style: style1,
+        onEachFeature: onEachFeature1,
+        //pointToLayer: pointToCustomMarker
+    }).addTo(map);  // Add layer to map immediately
+
+    var geojsonLayer2 = L.geoJSON(null, {
+        style: style2,
+        onEachFeature: onEachFeature2
+    }).addTo(map);  // Add layer to map immediately
+
+    var geojsonLayer3 = L.geoJSON(null, {
+        style: style3,
+        onEachFeature: onEachFeature3,
+        pointToLayer: pointToCustomMarkerAndCircle,
+        //pointToLayer: pointToCircle // Use pointToCircle function for points
+    }).addTo(map);  // Add layer to map immediately
+
+    
+
+
+    
+    // Load GeoJSON files and add data to layers
+    fetch('geojson/Point_Police_Station.geojson')
+            .then(response => response.json())
+            .then(data => {
+                geojsonLayer1.addData(data);
+            })
+            .catch(error => console.error('Error loading GeoJSON 1:', error));
+
+    fetch('geojson/Police_Station_Jurdition.geojson')
+            .then(response => response.json())
+            .then(data => {
+                geojsonLayer2.addData(data);
+            })
+            .catch(error => console.error('Error loading GeoJSON 2:', error));
+
+    fetch('geojson/Point_Crime_Synthetic.geojson')
+            .then(response => response.json())
+            .then(data => {
+                geojsonLayer3.addData(data);
+            })
+            .catch(error => console.error('Error loading GeoJSON 3:', error));
+
+    
+
+    
+
+    // Add base layers to the layer control
+    var baseMaps = {
+        "Police Stations": geojsonLayer1,
+        "Station Jurisdiction": geojsonLayer2,
+        "Crime": geojsonLayer3 // Initially, this layer will be empty until data is loaded
+    };
+    
+    // Layer control to toggle layers
+    L.control.layers(null, baseMaps).addTo(map);
+
+</script>
+
+</body>
+</html>
