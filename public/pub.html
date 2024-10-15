@@ -4,18 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crime Report</title>
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script> <!-- Google Maps API -->
     <link href="CSS_file/publicform.css" rel="stylesheet">
 </head>
 <body>
 
 <div class="container" id="polog-container">
+    <h2>Crime Report</h2>
     <form id="crimeForm">
         <div class="form-group">
             <label for="polog-pname"> Name</label>
             <input type="text" id="polog-pname" placeholder="Enter your Name" required>
         </div>
-        
+
+        <div class="form-group">
+            <label for="polog-phoneNo">Phone No</label>
+            <input type="number" id="polog-phoneNo" placeholder="Enter the Phone No" required>
+        </div>
+
         <div class="form-group">
             <label for="polog-crimetype">Crime Type</label>
             <select id="polog-crimetype" required>
@@ -31,28 +36,13 @@
         </div>
         
         <div class="form-group">
-            <label for="polog-phoneNo">Phone No</label>
-            <input type="number" id="polog-phoneNo" placeholder="Enter the Phone No" required>
-        </div>
-
-        <!-- <div class="form-group">
-            <label for="polog-date">Date</label>
-            <input type="date" id="polog-date" required>
-        </div>
-        <div class="form-group">
-            <label for="polog-time">Time</label>
-            <input type="time" id="polog-time" required>
-        </div> -->
-
-        <div class="form-group">
             <label for="polog-video">Video</label>
-            <input type="file" id="polog-video" accept="video/*" capture="camera" required>
+            <input type="file" id="polog-video" accept="video/*" capture="environment" required>
         </div>
-        
 
         <div class="form-group">
-            <label for="latitude">Latitude</label>
-            <input type="text" id="latitude" name="latitude" readonly>
+            <label for="latitude"></label>
+            <input type="text" id="latitude" name="latitude" readonly hidden>
         </div>
         <div class="form-group">
             <label for="longitude">Longitude</label>
@@ -76,9 +66,6 @@
 </div>
 
 <script>
-    // Initialize Google Maps Geocoder
-    const geocoder = new google.maps.Geocoder();
-
     document.getElementById('polog-video').addEventListener('change', function () {
         // Check if browser supports Geolocation
         if (navigator.geolocation) {
@@ -91,21 +78,22 @@
                 document.getElementById('latitude').value = latitude;
                 document.getElementById('longitude').value = longitude;
 
-                // Reverse Geocode: Convert Lat/Lng to address
-                const latlng = { lat: latitude, lng: longitude };
+                // Reverse Geocode: Convert Lat/Lng to address using OpenStreetMap Nominatim API
+                const apiUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
 
-                geocoder.geocode({ location: latlng }, function (results, status) {
-                    if (status === 'OK') {
-                        if (results[0]) {
+                fetch(apiUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data && data.display_name) {
                             // Set the address field in the form
-                            document.getElementById('address').value = results[0].formatted_address;
+                            document.getElementById('address').value = data.display_name;
                         } else {
                             alert('No address found for this location.');
                         }
-                    } else {
-                        alert('Geocoder failed due to: ' + status);
-                    }
-                });
+                    })
+                    .catch(error => {
+                        alert('Error fetching address: ' + error.message);
+                    });
 
                 // Set the current date and time in their respective fields
                 const now = new Date();

@@ -4,6 +4,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
 const path = require('path');
+const http = require('http');
+
 
 // // Serve static files from the 'public' folder
 app.use(express.static(path.join(__dirname, 'public')));
@@ -37,6 +39,8 @@ db.connect(err => {
 
 // Handle form submission
 app.post('/submit', (req, res) => {
+     console.log(req.body); // Log the received data to check
+    res.status(200).json({ message: 'Crime registered successfully!' });
     const {
         polog_pid,
         polog_pname,
@@ -68,7 +72,7 @@ app.post('/submit', (req, res) => {
     // const latitude = polog_lat ==='' ? null : polog_lat;
     // const longitude = polog_lng ==='' ? null : polog_lng;
 
-    const sql = 'INSERT INTO crimes (police_id, police_name, crime_type, crime_dec,location, latitude, longitude, date, time,victim_name, victim_no , victim_add , criminal_aadhaar, criminal_id, criminal_name ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    const sql = 'INSERT INTO policeregistration (police_id, police_name, crime_type, crime_dec,location, latitude, longitude, date, time,victim_name, victim_no , victim_add , criminal_aadhaar, criminal_id, criminal_name ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
     db.query(sql, [polog_pid, polog_pname, polog_crimetype,description, polog_loc, polog_lat, polog_lng,polog_date, polog_time , polog_vname,polog_vphone,polog_vaddress, aadhaar, cid, cname ], (err, result) => {
         if (err) {
@@ -85,7 +89,7 @@ app.post('/check-criminal', (req, res) => {
     const aadhaarNumber = req.body.aadhaar;
     console.log('Received Aadhaar Number:', aadhaarNumber); // Log the Aadhaar number
 
-    const sql = 'SELECT criminal_id, criminal_name FROM crimes WHERE criminal_aadhaar = ?';
+    const sql = 'SELECT criminal_id, criminal_name FROM policeregistration WHERE criminal_aadhaar = ?';
     db.query(sql, [aadhaarNumber], (err, results) => {
         if (err) {
             console.log('Error checking criminal:', err);
@@ -107,6 +111,10 @@ app.post('/check-criminal', (req, res) => {
     });
 });
 
+// const server = http.createServer((req, res) => {
+//     res.write('Hello World');
+//     res.end();
+// });
 
 
 // Serve the form
@@ -114,10 +122,12 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/policeForm.html');
 });
 
-// Start the server
-app.listen(3000, () => {
-    console.log('Server running on port 3000');
+// Start the server and bind it to 0.0.0.0 to allow access from other devices on the network
+app.listen(3000, '0.0.0.0', () => {
+    console.log('Server running at http://0.0.0.0:3000/');
 });
 
 
-//  http://localhost:3000
+//      http://localhost:3000/
+//      node server.js
+//      C:\Users\princy\Desktop\ngrok-v3-stable-windows-amd64\ngrok.exe http 3000

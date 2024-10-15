@@ -173,8 +173,15 @@ body {
 /* Responsive design for sidebar */
 @media (max-width: 768px) {
     #sidebar {
-        width: 30%; /* Full width on smaller screens */
+        /* min-width: auto; */
+        width: 20%;
         padding: 15px;
+    }
+    #policelog {
+        top: 109px;
+        right: 1px;
+        width: 270px;
+        height: 490px;
     }
 }
 

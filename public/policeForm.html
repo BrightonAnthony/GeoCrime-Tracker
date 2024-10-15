@@ -46,7 +46,9 @@
                 <div id="policelog-header">Crime Registration</div>
                 <div class="container" id="polog-container">
                     <!-- Police Log Form -->
-                    <form action="http://localhost:3000/submit" method="POST">
+                    <!-- <form action="http://localhost:3000/submit" method="POST"> -->
+                    <form id="crimeForm" >
+
                         <!-- Police Information Section -->
                         <fieldset>
                             <legend>Police Information</legend>
@@ -151,7 +153,7 @@
 
 
                         <!-- Submit Button -->
-                        <button type="submit" id="btn">Register</button>
+                        <button type="submit" id="btn" class="btn">Register</button>
                     </form>
                 </div>
 
@@ -179,6 +181,58 @@
 
 <!-- Leaflet Control Geocoder for the search bar -->
 <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+
+
+<script>
+    document.getElementById('crimeForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent the default form submission
+        console.log('Submit button clicked');
+        // Collect form data
+        const polog_pid = document.getElementById('polog-pid').value;
+        const polog_pname = document.getElementById('polog-pname').value;
+        const polog_crimetype = document.getElementById('polog-crimetype').value;
+        const description = document.getElementById('polog-crimedesc').value;
+        const polog_loc = document.getElementById('polog-loc').value;
+        const polog_lat = document.getElementById('polog_lat').value;
+        const polog_lng = document.getElementById('polog_lng').value;
+        const polog_date = document.getElementById('polog-date').value;
+        const polog_time = document.getElementById('polog-time').value;
+        const polog_vname = document.getElementById('polog-vname').value;
+        const polog_vphone = document.getElementById('polog-vphone').value;
+        const polog_vaddress = document.getElementById('polog-vaddress').value;
+        const aadhaar = document.getElementById('polog-cadhaarnum').value;
+        const cid = document.getElementById('polog-cid').value;
+        const cname = document.getElementById('polog-cname').value;
+
+        // Prepare data to send
+        const formData = {
+            polog_pid, polog_pname, polog_crimetype, description,
+            polog_loc, polog_lat, polog_lng, polog_date, polog_time,
+            polog_vname, polog_vphone, polog_vaddress, aadhaar, cid, cname
+        };
+
+        // Send data to the server using fetch API
+        fetch('http://localhost:3000/submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                alert(data.message); // Show success message
+                document.getElementById('crimeForm').reset(); // Optionally clear the form
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+</script>
+
+
+
 
 
 <script>
