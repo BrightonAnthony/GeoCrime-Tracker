@@ -22,25 +22,37 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 // Connect to MySQL database
-const db = mysql.createConnection({
+// const db = mysql.createConnection({
+//     host: 'localhost',
+//     user: 'brighton',   // Your MySQL username
+//     password: 'bri123',   // Your MySQL password
+//     database: 'geocrime_tracker'  // Your database name
+// });
+
+const db = mysql.createPool({
     host: 'localhost',
-    user: 'brighton',   // Your MySQL username
-    password: 'bri123',   // Your MySQL password
-    database: 'geocrime_tracker'  // Your database name
+    user: 'brighton',
+    password: 'bri123',
+    database: 'geocrime_tracker',
+    waitForConnections: true,
+    connectionLimit: 10,  // Number of connections in pool
+    queueLimit: 0
 });
 
-db.connect(err => {
-    if (err) {
-        console.log('Error connecting to MySQL:', err);
-    } else {
-        console.log('Connected to MySQL');
-    }
-});
+
+// db.connect(err => {
+//     if (err) {
+//         console.log('Error connecting to MySQL:', err);
+//     } else {
+//         console.log('Connected to MySQL');
+//     }
+// });
 
 // Handle form submission
 app.post('/submit', (req, res) => {
-     console.log(req.body); // Log the received data to check
-    res.status(200).json({ message: 'Crime registered successfully!' });
+    console.log('Request received for /submit');
+    console.log('Form data:', req.body);
+    // console.log(req.body); // Log the received data to check
     const {
         polog_pid,
         polog_pname,
