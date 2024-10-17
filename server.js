@@ -78,9 +78,10 @@ app.post('/submit', (req, res) => {
 
     // Handle empty fields for aadhaar and other numeric fields
     const description = polog_crimedesc === '' ? null : polog_crimedesc;
-    const aadhaar = polog_cadhaarnum === '' ? null : polog_cadhaarnum;
-    const cid = polog_cid === '' ? null : polog_cid;
-    const cname = polog_cname ==='' ? null : polog_cname;
+    const aadhaar = (!polog_cadhaarnum || polog_cadhaarnum === '') ? null : polog_cadhaarnum;
+    const cid = (!polog_cid || polog_cid === '') ? null : polog_cid;
+    const cname = (!polog_cname || polog_cname === '') ? null : polog_cname;
+
     // const latitude = polog_lat ==='' ? null : polog_lat;
     // const longitude = polog_lng ==='' ? null : polog_lng;
 

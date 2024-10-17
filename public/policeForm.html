@@ -185,58 +185,6 @@
 
 
 <script>
-    document.getElementById('crimeForm').addEventListener('submit', function (event) {
-        event.preventDefault(); // Prevent the default form submission
-        console.log('Submit button clicked');
-        // Collect form data
-        const polog_pid = document.getElementById('polog-pid').value;
-        const polog_pname = document.getElementById('polog-pname').value;
-        const polog_crimetype = document.getElementById('polog-crimetype').value;
-        const description = document.getElementById('polog-crimedesc').value;
-        const polog_loc = document.getElementById('polog-loc').value;
-        const polog_lat = document.getElementById('polog_lat').value;
-        const polog_lng = document.getElementById('polog_lng').value;
-        const polog_date = document.getElementById('polog-date').value;
-        const polog_time = document.getElementById('polog-time').value;
-        const polog_vname = document.getElementById('polog-vname').value;
-        const polog_vphone = document.getElementById('polog-vphone').value;
-        const polog_vaddress = document.getElementById('polog-vaddress').value;
-        const aadhaar = document.getElementById('polog-cadhaarnum').value;
-        const cid = document.getElementById('polog-cid').value;
-        const cname = document.getElementById('polog-cname').value;
-
-        // Prepare data to send
-        const formData = {
-            polog_pid, polog_pname, polog_crimetype, description,
-            polog_loc, polog_lat, polog_lng, polog_date, polog_time,
-            polog_vname, polog_vphone, polog_vaddress, aadhaar, cid, cname
-        };
-
-        // Send data to the server using fetch API
-        fetch('http://localhost:3000/submit', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Cache-Control': 'no-cache'
-            },
-            body: JSON.stringify(formData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message) {
-                alert(data.message); // Show success message
-                document.getElementById('crimeForm').reset(); // Optionally clear the form
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    });
-</script>
-
-
-
-
-
-<script>
     // JavaScript to ensure only one details section is open at a time
     const toggleSections = document.querySelectorAll('.toggle-section');
 
@@ -276,6 +224,7 @@
     })
     .then(data => {
         if (data.found) {
+            alert('Criminal found.');
             document.getElementById('polog-cid').value = data.id;
             document.getElementById('polog-cname').value = data.name;
         } else {
@@ -290,6 +239,59 @@
     });
 });
 </script>
+
+
+
+
+
+<script>
+    document.getElementById('crimeForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent the default form submission
+        console.log('Submit button clicked');
+        // Collect form data
+        const polog_pid = document.getElementById('polog-pid').value;
+        const polog_pname = document.getElementById('polog-pname').value;
+        const polog_crimetype = document.getElementById('polog-crimetype').value;
+        const description = document.getElementById('polog-crimedesc').value;
+        const polog_loc = document.getElementById('polog-loc').value;
+        const polog_lat = document.getElementById('polog_lat').value;
+        const polog_lng = document.getElementById('polog_lng').value;
+        const polog_date = document.getElementById('polog-date').value;
+        const polog_time = document.getElementById('polog-time').value;
+        const polog_vname = document.getElementById('polog-vname').value;
+        const polog_vphone = document.getElementById('polog-vphone').value;
+        const polog_vaddress = document.getElementById('polog-vaddress').value;
+        const polog_cadhaarnum = document.getElementById('polog-cadhaarnum').value;
+        const polog_cid = document.getElementById('polog-cid').value;
+        const polog_cname = document.getElementById('polog-cname').value;
+
+        // Prepare data to send
+        const formData = {
+            polog_pid, polog_pname, polog_crimetype, description,
+            polog_loc, polog_lat, polog_lng, polog_date, polog_time,
+            polog_vname, polog_vphone, polog_vaddress, polog_cadhaarnum, polog_cid, polog_cname
+        };
+
+        // Send data to the server using fetch API
+        fetch('http://localhost:3000/submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                alert(data.message); // Show success message
+                document.getElementById('crimeForm').reset(); // Optionally clear the form
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+</script>
+
 
 
 
