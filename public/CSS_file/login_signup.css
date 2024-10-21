@@ -19,8 +19,42 @@ body {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    opacity: 60%;
+    opacity: 70%;
 }
+
+/* index */
+.container-ind{
+    width: 400px;
+    background-color: #000000;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    opacity: 73%;
+    text-align: center;
+    color: white;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+#bt-ind{
+    padding: 15px 15px;
+    font-size: 20px;
+    margin: 20px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    transition: background 0.3s;
+    color: black;
+    font-weight: 600;
+} 
+
+#bt-ind:hover {
+    background: #007BFF;
+    color: white;
+}
+/* index */
+
 
 h2 {
     text-align: center;

@@ -267,7 +267,7 @@ app.post('/login', (req, res) => {
             }
 
             // Authentication successful
-            return res.status(200).json({ message: 'Login successful', redirect: '/index.html' });
+            return res.status(200).json({ message: 'Login successful', redirect: '/CrimeMonitoring.html' });
         });
     });
 });
