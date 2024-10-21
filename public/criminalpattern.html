@@ -122,7 +122,7 @@
 
     function onEachFeature3(feature, layer) {
         if (feature.properties && feature.properties.name) {
-            layer.bindPopup("<strong> Crime :</strong> " + feature.properties.name);
+            layer.bindPopup("<strong> Crime :</strong> " + feature.properties.name + "<br><strong> Description :</strong> " + feature.properties.description);
         } else {
             console.warn('Feature properties not found for layer 3:', feature);
         }
@@ -134,7 +134,7 @@
 
     // Create a custom icon with a specific color
     var customIcon = L.icon({
-        iconUrl: 'pics/redcrime.png',  // Path to custom marker icon image
+        iconUrl: 'pics/standing-up-man-.png',  // Path to custom marker icon image
         iconSize: [20, 20],    // Icon size
         iconAnchor: [10, 20] // Point where the icon is anchored (center-bottom)
     });
@@ -147,40 +147,6 @@
 
 
 
-    // Function to create circle markers for GeoJSON points
-    function pointToCircle(feature, latlng) {
-        return L.circle(latlng, {
-            color: 'red',
-            fillColor: '#f03',
-            fillOpacity: 0.5,
-            radius: 3000 // Adjust the radius as needed
-        }).bindPopup(feature.properties.description); // Bind popup with description
-    }
-
-
-    // Function to create both a custom marker and a circle for the same point
-    function pointToCustomMarkerAndCircle(feature, latlng) {
-        // Create the custom marker
-        var customIcon = L.icon({
-            iconUrl: 'pics/redcrime.png',  // Path to your custom icon
-            iconSize: [20, 20],    // Icon size
-            iconAnchor: [10, 20]    // Adjust the anchor as needed
-        });
-        var marker = L.marker(latlng, { icon: customIcon }).bindPopup(feature.properties.name);
-
-        // Create the circle around the same point
-        var circle = L.circle(latlng, {
-            color: '',
-            fillColor: 'rgb(226, 128, 42)',
-            fillOpacity: 0.5,
-            radius: 1000 // Adjust radius as needed
-        });
-
-        // Add both the marker and the circle to a LayerGroup
-        return L.layerGroup([marker, circle]);
-    }
-
-
 
 
     // Define GeoJSON layers
@@ -188,17 +154,17 @@
         style: style1,
         onEachFeature: onEachFeature1,
         //pointToLayer: pointToCustomMarker
-    }).addTo(map);  // Add layer to map immediately
+    });  // Add layer to map immediately
 
     var geojsonLayer2 = L.geoJSON(null, {
         style: style2,
         onEachFeature: onEachFeature2
-    }).addTo(map);  // Add layer to map immediately
+    });  // Add layer to map immediately
 
     var geojsonLayer3 = L.geoJSON(null, {
         style: style3,
         onEachFeature: onEachFeature3,
-        pointToLayer: pointToCustomMarkerAndCircle,
+        pointToLayer: pointToCustomMarker
         //pointToLayer: pointToCircle // Use pointToCircle function for points
     }).addTo(map);  // Add layer to map immediately
 
@@ -221,12 +187,47 @@
             })
             .catch(error => console.error('Error loading GeoJSON 2:', error));
 
-    fetch('geojson/Point_Crime_Synthetic.geojson')
-            .then(response => response.json())
-            .then(data => {
-                geojsonLayer3.addData(data);
-            })
-            .catch(error => console.error('Error loading GeoJSON 3:', error));
+    // Load GeoJSON files and add data to layers
+    fetch('geojson/point_criminal.geojson')
+        .then(response => response.json())
+        .then(data => {
+            geojsonLayer3.addData(data);
+
+            // Initialize an empty object to store crime locations by the same criminal name
+            var criminalLocations = {};
+
+            // Loop through your GeoJSON data to group crime locations by the same criminal
+            geojsonLayer3.eachLayer(function(layer) {
+                var criminalName = layer.feature.properties.name; // Get the criminal name
+                var latlng = layer.getLatLng(); // Get the location of the crime
+
+                // If the criminal name exists, add the location to the array
+                if (criminalLocations[criminalName]) {
+                    criminalLocations[criminalName].push(latlng);
+                } else {
+                    // Otherwise, create a new array with the first location
+                    criminalLocations[criminalName] = [latlng];
+                }
+            });
+
+            // Now, draw polylines for each criminal based on their crime locations
+            Object.keys(criminalLocations).forEach(function(criminalName) {
+                var crimeLocations = criminalLocations[criminalName];
+
+                if (crimeLocations.length > 1) {
+                    // Only draw a polyline if there is more than one crime location
+                    var polyline = L.polyline(crimeLocations, {
+                        color: 'red', // You can change the line color
+                        weight: 2
+                    }).addTo(map);
+
+                    // Optionally, bind a popup to the polyline with the criminal name
+                    polyline.bindPopup("<strong>Criminal:</strong> " + criminalName);
+                }
+            });
+        })
+        .catch(error => console.error('Error loading GeoJSON 3:', error));
+
 
     
 

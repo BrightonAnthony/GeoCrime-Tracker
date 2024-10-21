@@ -1,0 +1,126 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "John Doe",
+          "crimeType": "Robbery",
+          "description": "Armed robbery at a jewelry store"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8777, 19.0760]   
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "John Doe",
+          "crimeType": "Assault",
+          "description": "Physical assault on a street vendor"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8354, 19.1077] 
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "John Doe",
+          "crimeType": "Burglary",
+          "description": "Break-in at a residential house"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8333, 19.2183]  
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "John Doe",
+          "crimeType": "Car Theft",
+          "description": "Stolen vehicle from parking lot"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8703, 19.2336] 
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "Jane Smith",
+          "crimeType": "Fraud",
+          "description": "Credit card fraud in a mall"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8715, 19.1178]  
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "Alex Patel",
+          "crimeType": "Vandalism",
+          "description": "Damaged public property at a park"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8623, 19.1844]  
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "Michael Singh",
+          "crimeType": "Drug Possession",
+          "description": "Caught with illegal drugs"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8373, 19.2001]  
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "Sanjay Rao",
+          "crimeType": "Kidnapping",
+          "description": "Abducted a minor from the area"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8804, 19.2288] 
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "John Doe",
+          "crimeType": "Robbery",
+          "description": "Mugged a person at knifepoint"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8145, 19.0125]  
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "David Johnson",
+          "crimeType": "Arson",
+          "description": "Set fire to an abandoned building"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8721, 19.1444]  
+        }
+      }
+    ]
+  }
+  
