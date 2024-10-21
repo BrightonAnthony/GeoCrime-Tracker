@@ -65,7 +65,7 @@
 
     // Add OpenStreetMap tile layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
+        maxZoom: 15,
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">Brighton</a> contributors'
     }).addTo(map);
     //L.marker([19.0760, 72.8777]).addTo(map).bindPopup('Mumbai').openPopup();
@@ -90,13 +90,13 @@
         };
     }
 
-    function style3(feature) {
-        return {
-            color: "#005666",
-            weight: 1,
-            opacity: 0.65
-        };
-    }
+    // function style3(feature) {
+    //     return {
+    //         color: "#005666",
+    //         weight: 1,
+    //         opacity: 0.65
+    //     };
+    // }
 
 
 
@@ -120,65 +120,16 @@
     }
 
 
-    function onEachFeature3(feature, layer) {
-        if (feature.properties && feature.properties.name) {
-            layer.bindPopup("<strong> Crime :</strong> " + feature.properties.name);
-        } else {
-            console.warn('Feature properties not found for layer 3:', feature);
-        }
-    }
+    // function onEachFeature3(feature, layer) {
+    //     if (feature.properties && feature.properties.name) {
+    //         layer.bindPopup("<strong> Crime :</strong> " + feature.properties.name);
+    //     } else {
+    //         console.warn('Feature properties not found for layer 3:', feature);
+    //     }
+    // }
     
 
 
-
-
-    // Create a custom icon with a specific color
-    var customIcon = L.icon({
-        iconUrl: 'pics/redcrime.png',  // Path to custom marker icon image
-        iconSize: [20, 20],    // Icon size
-        iconAnchor: [10, 20] // Point where the icon is anchored (center-bottom)
-    });
-
-    // Use the custom icon in pointToLayer
-    function pointToCustomMarker(feature, latlng) {
-        return L.marker(latlng, { icon: customIcon })
-            .bindPopup(feature.properties.description); // Bind popup with description
-    }
-
-
-
-    // Function to create circle markers for GeoJSON points
-    function pointToCircle(feature, latlng) {
-        return L.circle(latlng, {
-            color: 'red',
-            fillColor: '#f03',
-            fillOpacity: 0.5,
-            radius: 3000 // Adjust the radius as needed
-        }).bindPopup(feature.properties.description); // Bind popup with description
-    }
-
-
-    // Function to create both a custom marker and a circle for the same point
-    function pointToCustomMarkerAndCircle(feature, latlng) {
-        // Create the custom marker
-        var customIcon = L.icon({
-            iconUrl: 'pics/redcrime.png',  // Path to your custom icon
-            iconSize: [20, 20],    // Icon size
-            iconAnchor: [10, 20]    // Adjust the anchor as needed
-        });
-        var marker = L.marker(latlng, { icon: customIcon }).bindPopup(feature.properties.name);
-
-        // Create the circle around the same point
-        var circle = L.circle(latlng, {
-            color: '',
-            fillColor: 'rgb(226, 128, 42)',
-            fillOpacity: 0.5,
-            radius: 1000 // Adjust radius as needed
-        });
-
-        // Add both the marker and the circle to a LayerGroup
-        return L.layerGroup([marker, circle]);
-    }
 
 
 
@@ -188,21 +139,30 @@
         style: style1,
         onEachFeature: onEachFeature1,
         //pointToLayer: pointToCustomMarker
-    }).addTo(map);  // Add layer to map immediately
+    });  // Add layer to map immediately
 
     var geojsonLayer2 = L.geoJSON(null, {
         style: style2,
         onEachFeature: onEachFeature2
-    }).addTo(map);  // Add layer to map immediately
+    });  // Add layer to map immediately
 
-    var geojsonLayer3 = L.geoJSON(null, {
-        style: style3,
-        onEachFeature: onEachFeature3,
-        pointToLayer: pointToCustomMarkerAndCircle,
-        //pointToLayer: pointToCircle // Use pointToCircle function for points
-    }).addTo(map);  // Add layer to map immediately
+    // var geojsonLayer3 = L.geoJSON(null, {
+    //     style: style3,
+    //     onEachFeature: onEachFeature3,
+    //     pointToLayer: pointToCustomMarkerAndCircle,
+    //     //pointToLayer: pointToCircle // Use pointToCircle function for points
+    // });  // Add layer to map immediately
 
-    
+
+
+     // Function to get intensity from GeoJSON
+    function getIntensityFromFeature(feature) {
+      return feature.properties.intensity || 0.5  // Default to 0.5 if no intensity provided
+    }
+
+
+    // Create an array to store heatmap data points
+    var heatmapPoints = [];
 
 
     
@@ -221,12 +181,33 @@
             })
             .catch(error => console.error('Error loading GeoJSON 2:', error));
 
-    fetch('geojson/Point_Crime_Synthetic.geojson')
-            .then(response => response.json())
-            .then(data => {
-                geojsonLayer3.addData(data);
-            })
-            .catch(error => console.error('Error loading GeoJSON 3:', error));
+    fetch('geojson/predictive.geojson')
+        .then(response => response.json())
+        .then(data => {
+        // Loop through each feature (crime point) in the GeoJSON
+        data.features.forEach(function(feature) {
+        var coordinates = feature.geometry.coordinates;
+        var intensity = getIntensityFromFeature(feature);
+        heatmapPoints.push([coordinates[1], coordinates[0], intensity]);  // Leaflet uses lat-lng, not lng-lat
+        });
+
+        // Create the heatmap layer
+        var heat = L.heatLayer(heatmapPoints, {
+          radius: 30,     // Adjust the radius for the heatmap
+          blur: 19,       // Blurring for smoother heatmap transitions
+          maxZoom: 17,    // Maximum zoom level to display heatmap
+          max: 0.2,
+        //   gradient: {
+        //         // 0.2: 'yellow',   // Low intensity
+        //         // // 0.4: 'lime',   // Medium-low intensity
+        //         // 0.5: 'orange', // Medium intensity
+        //         // 0.8: 'orange', // Medium-high intensity
+        //         1.0: 'red'     // High intensity
+        //     }     // Maximum intensity for the heatmap
+        }).addTo(map);
+    })
+    .catch(error => console.error('Error loading GeoJSON for heatmap:', error));
+
 
     
 
@@ -236,7 +217,7 @@
     var baseMaps = {
         "Police Stations": geojsonLayer1,
         "Station Jurisdiction": geojsonLayer2,
-        "Crime": geojsonLayer3 // Initially, this layer will be empty until data is loaded
+        //"Crime": geojsonLayer3 // Initially, this layer will be empty until data is loaded
     };
     
     // Layer control to toggle layers
