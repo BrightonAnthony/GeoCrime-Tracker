@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Real-Time Crime Monitoring</title>
-  <link rel="stylesheet" href="CSS_file/dashboard.css">
+  <link rel="stylesheet" href="CSS_file/monitoring.css">
   <!-- Bootstrap CSS -->
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -43,8 +43,12 @@
             <div class="main-content">
                 <h5 class="text">Real-Time Crime Monitoring</h5>
                 <!-- Leaflet Map -->
-                <div id="map"></div>
-                
+                 <div class="map_app">
+                    <div id="map"></div>
+                    <div class="approval">
+
+                    </div>
+                </div>
             </div>
         </div>
     
@@ -188,19 +192,19 @@
         style: style1,
         onEachFeature: onEachFeature1,
         //pointToLayer: pointToCustomMarker
-    }).addTo(map);  // Add layer to map immediately
+    });  // Add layer to map immediately
 
     var geojsonLayer2 = L.geoJSON(null, {
         style: style2,
         onEachFeature: onEachFeature2
-    }).addTo(map);  // Add layer to map immediately
+    });  // Add layer to map immediately
 
     var geojsonLayer3 = L.geoJSON(null, {
         style: style3,
         onEachFeature: onEachFeature3,
         pointToLayer: pointToCustomMarkerAndCircle,
         //pointToLayer: pointToCircle // Use pointToCircle function for points
-    }).addTo(map);  // Add layer to map immediately
+    });  // Add layer to map immediately
 
     
 

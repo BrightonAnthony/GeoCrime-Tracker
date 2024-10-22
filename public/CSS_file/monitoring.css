@@ -115,10 +115,30 @@ body {
     flex-direction: column;
     flex-grow: 1; /* Take up the remaining space after the sidebar */
     padding: 5px;
+    padding-right: 0px;
     padding-top: 10px;
     
 }
 
+.map_app{
+    display: flex;
+    flex-grow: 1;
+    flex-direction: row;
+}
+
+
+.approval{
+    width: 860px;
+    background: #343a40;
+    padding: 5px;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
+    overflow-y: auto;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    /* margin-bottom: 1px; */
+    margin-left: 5px;
+    
+}
 /* Responsive design for sidebar */
 @media (max-width: 768px) {
     #sidebar {
@@ -132,6 +152,7 @@ body {
     flex-grow: 1;
     width: 100%;
     border-radius: 8px;
+    margin-right: 1px;
 }
 
 /* Footer */
