@@ -122,7 +122,9 @@
 
     function onEachFeature3(feature, layer) {
         if (feature.properties && feature.properties.name) {
-            layer.bindPopup("<strong> Crime :</strong> " + feature.properties.name + "<br><strong> Description :</strong> " + feature.properties.description);
+            layer.bindPopup("<strong> Crime :</strong> " + feature.properties.name + "<br><strong> Description :</strong> " + feature.properties.description
+            + "<br><strong> Date :</strong> " + feature.properties.date
+            );
         } else {
             console.warn('Feature properties not found for layer 3:', feature);
         }
@@ -144,7 +146,11 @@
         return L.marker(latlng, { icon: customIcon })
             .bindPopup(feature.properties.description); // Bind popup with description
     }
-
+    // Function to generate a distinct color using HSL
+    function getDistinctColor(index) {
+        var hue = index * 137.508; // Use golden angle to spread hues around the color wheel
+        return 'hsl(' + hue + ', 70%, 50%)'; // 70% saturation, 50% lightness for vivid colors
+    }
 
 
 
@@ -187,14 +193,18 @@
             })
             .catch(error => console.error('Error loading GeoJSON 2:', error));
 
+    
+
     // Load GeoJSON files and add data to layers
     fetch('geojson/point_criminal.geojson')
         .then(response => response.json())
         .then(data => {
             geojsonLayer3.addData(data);
 
-            // Initialize an empty object to store crime locations by the same criminal name
+            // Initialize an empty object to store crime locations and colors for each criminal
             var criminalLocations = {};
+            var criminalColors = {};
+            var criminalIndex = 0; // To ensure distinct color for each criminal
 
             // Loop through your GeoJSON data to group crime locations by the same criminal
             geojsonLayer3.eachLayer(function(layer) {
@@ -205,8 +215,9 @@
                 if (criminalLocations[criminalName]) {
                     criminalLocations[criminalName].push(latlng);
                 } else {
-                    // Otherwise, create a new array with the first location
+                    // Otherwise, create a new array with the first location and assign a distinct color
                     criminalLocations[criminalName] = [latlng];
+                    criminalColors[criminalName] = getDistinctColor(criminalIndex++); // Assign distinct color using HSL
                 }
             });
 
@@ -217,7 +228,7 @@
                 if (crimeLocations.length > 1) {
                     // Only draw a polyline if there is more than one crime location
                     var polyline = L.polyline(crimeLocations, {
-                        color: 'red', // You can change the line color
+                        color: criminalColors[criminalName], // Use the distinct color for the criminal
                         weight: 2
                     }).addTo(map);
 
@@ -227,6 +238,7 @@
             });
         })
         .catch(error => console.error('Error loading GeoJSON 3:', error));
+
 
 
     

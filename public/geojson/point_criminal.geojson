@@ -6,11 +6,12 @@
         "properties": {
           "name": "John Doe",
           "crimeType": "Robbery",
-          "description": "Armed robbery at a jewelry store"
+          "description": "Armed robbery at a jewelry store",
+          "date": "2024-09-15"
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [72.8777, 19.0760]   
+          "coordinates": [72.8777, 19.0760]
         }
       },
       {
@@ -18,11 +19,12 @@
         "properties": {
           "name": "John Doe",
           "crimeType": "Assault",
-          "description": "Physical assault on a street vendor"
+          "description": "Physical assault on a street vendor",
+          "date": "2024-10-01"
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [72.8354, 19.1077] 
+          "coordinates": [72.8354, 19.1077]
         }
       },
       {
@@ -30,11 +32,12 @@
         "properties": {
           "name": "John Doe",
           "crimeType": "Burglary",
-          "description": "Break-in at a residential house"
+          "description": "Break-in at a residential house",
+          "date": "2024-09-30"
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [72.8333, 19.2183]  
+          "coordinates": [72.8333, 19.2183]
         }
       },
       {
@@ -42,11 +45,12 @@
         "properties": {
           "name": "John Doe",
           "crimeType": "Car Theft",
-          "description": "Stolen vehicle from parking lot"
+          "description": "Stolen vehicle from parking lot",
+          "date": "2024-08-22"
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [72.8703, 19.2336] 
+          "coordinates": [72.8703, 19.2336]
         }
       },
       {
@@ -54,11 +58,12 @@
         "properties": {
           "name": "Jane Smith",
           "crimeType": "Fraud",
-          "description": "Credit card fraud in a mall"
+          "description": "Credit card fraud in a mall",
+          "date": "2024-07-19"
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [72.8715, 19.1178]  
+          "coordinates": [72.8715, 19.1178]
         }
       },
       {
@@ -66,11 +71,12 @@
         "properties": {
           "name": "Alex Patel",
           "crimeType": "Vandalism",
-          "description": "Damaged public property at a park"
+          "description": "Damaged public property at a park",
+          "date": "2024-10-05"
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [72.8623, 19.1844]  
+          "coordinates": [72.8623, 19.1844]
         }
       },
       {
@@ -78,11 +84,12 @@
         "properties": {
           "name": "Michael Singh",
           "crimeType": "Drug Possession",
-          "description": "Caught with illegal drugs"
+          "description": "Caught with illegal drugs",
+          "date": "2024-06-30"
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [72.8373, 19.2001]  
+          "coordinates": [72.8373, 19.2001]
         }
       },
       {
@@ -90,11 +97,12 @@
         "properties": {
           "name": "Sanjay Rao",
           "crimeType": "Kidnapping",
-          "description": "Abducted a minor from the area"
+          "description": "Abducted a minor from the area",
+          "date": "2024-08-15"
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [72.8804, 19.2288] 
+          "coordinates": [72.8804, 19.2288]
         }
       },
       {
@@ -102,11 +110,12 @@
         "properties": {
           "name": "John Doe",
           "crimeType": "Robbery",
-          "description": "Mugged a person at knifepoint"
+          "description": "Mugged a person at knifepoint",
+          "date": "2024-10-10"
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [72.8145, 19.0125]  
+          "coordinates": [72.8145, 19.0125]
         }
       },
       {
@@ -114,11 +123,285 @@
         "properties": {
           "name": "David Johnson",
           "crimeType": "Arson",
-          "description": "Set fire to an abandoned building"
+          "description": "Set fire to an abandoned building",
+          "date": "2024-09-03"
         },
         "geometry": {
           "type": "Point",
-          "coordinates": [72.8721, 19.1444]  
+          "coordinates": [72.8721, 19.1444]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "Rahul Sharma",
+          "crimeType": "Theft",
+          "description": "Stole a wallet from a pedestrian",
+          "date": "2024-09-01"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8523, 19.1450]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "Ravi Kapoor",
+          "crimeType": "Burglary",
+          "description": "Break-in at a local business",
+          "date": "2024-10-03"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8910, 19.0821]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "Sanjay Rao",
+          "crimeType": "Robbery",
+          "description": "Armed robbery at a convenience store",
+          "date": "2024-09-25"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8754, 19.2036]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "John Doe",
+          "crimeType": "Assault",
+          "description": "Assaulted a passerby during an argument",
+          "date": "2024-09-10"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8456, 19.1156]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "Jane Smith",
+          "crimeType": "Fraud",
+          "description": "Insurance fraud case",
+          "date": "2024-09-05"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8615, 19.1578]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "David Johnson",
+          "crimeType": "Vandalism",
+          "description": "Sprayed graffiti on public buildings",
+          "date": "2024-08-20"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8344, 19.1123]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "Rahul Sharma",
+          "crimeType": "Drug Trafficking",
+          "description": "Caught transporting illegal substances",
+          "date": "2024-10-08"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8444, 19.1233]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "Alex Patel",
+          "crimeType": "Theft",
+          "description": "Shoplifting incident at a mall",
+          "date": "2024-09-15"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8823, 19.1223]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "Sanjay Rao",
+          "crimeType": "Drug Possession",
+          "description": "Found with illegal substances",
+          "date": "2024-07-22"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8875, 19.1245]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "Michael Singh",
+          "crimeType": "Fraud",
+          "description": "Online scam targeting elderly",
+          "date": "2024-08-12"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8500, 19.2101]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "John Doe",
+          "crimeType": "Arson",
+          "description": "Set fire to a vehicle",
+          "date": "2024-09-21"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8155, 19.0205]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "David Johnson",
+          "crimeType": "Kidnapping",
+          "description": "Abduction during a family dispute",
+          "date": "2024-07-25"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8712, 19.1421]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "Ravi Kapoor",
+          "crimeType": "Vandalism",
+          "description": "Destroyed city benches in a park",
+          "date": "2024-09-28"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8583, 19.1356]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "Sanjay Rao",
+          "crimeType": "Theft",
+          "description": "Pickpocketing at a crowded market",
+          "date": "2024-10-02"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8523, 19.1044]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "Rahul Sharma",
+          "crimeType": "Car Theft",
+          "description": "Stolen vehicle from public garage",
+          "date": "2024-10-06"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8543, 19.1623]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "Sanjay Rao",
+          "crimeType": "Robbery",
+          "description": "Held up a shop owner at gunpoint",
+          "date": "2024-10-14"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8745, 19.1788]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "John Doe",
+          "crimeType": "Burglary",
+          "description": "Attempted break-in at a retail store",
+          "date": "2024-10-09"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8599, 19.1502]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "Pooja Naik",
+          "crimeType": "Cybercrime",
+          "description": "Hacked into a financial system",
+          "date": "2024-10-15"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8350, 19.1800]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "Amit Desai",
+          "crimeType": "Extortion",
+          "description": "Threatened a local business owner",
+          "date": "2024-09-20"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8750, 19.2000]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "Sneha Shah",
+          "crimeType": "Drug Trafficking",
+          "description": "Caught transporting illegal drugs",
+          "date": "2024-08-01"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8502, 19.1023]
+        }
+      },
+      {
+        "type": "Feature",
+        "properties": {
+          "name": "Rakesh Mehta",
+          "crimeType": "Fraud",
+          "description": "Forgery of documents for personal gain",
+          "date": "2024-07-30"
+        },
+        "geometry": {
+          "type": "Point",
+          "coordinates": [72.8871, 19.2025]
         }
       }
     ]
