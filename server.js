@@ -6,6 +6,7 @@ const app = express();
 const path = require('path');
 const http = require('http');
 const bcrypt = require('bcryptjs');
+const multer = require('multer');
 
 
 // // Serve static files from the 'public' folder
@@ -125,11 +126,6 @@ app.post('/check-criminal', (req, res) => {
     });
 });
 
-// const server = http.createServer((req, res) => {
-//     res.write('Hello World');
-//     res.end();
-// });
-
 
 // Serve the form
 app.get('/', (req, res) => {
@@ -138,53 +134,6 @@ app.get('/', (req, res) => {
 
 
 
-
-
-
-// Handle signup form submission
-
-// Handle signup form submission with password hashing
-// app.post('/signup', (req, res) => {
-//     const { name, email, password, confirm_password } = req.body;
-
-//     // Check if passwords match
-//     if (password !== confirm_password) {
-//         return res.status(400).json({ message: 'Passwords do not match' });
-//     }
-
-//     // Check if email already exists in the database
-//     const checkEmailSql = 'SELECT * FROM users WHERE email = ?';
-//     db.query(checkEmailSql, [email], (err, results) => {
-//         if (err) {
-//             console.log('Error checking email:', err);
-//             return res.status(500).json({ message: 'Server error' });
-//         }
-
-//         if (results.length > 0) {
-//             return res.status(400).json({ message: 'Email already in use' });
-//         }
-
-//         // Hash the password before storing
-//         bcrypt.hash(password, 10, (err, hash) => {
-//             if (err) {
-//                 console.log('Error hashing password:', err);
-//                 return res.status(500).json({ message: 'Server error' });
-//             }
-
-//             // If email is not in use, insert new user into the database
-//             const insertUserSql = 'INSERT INTO users (name, email, password) VALUES (?, ?, ?)';
-//             db.query(insertUserSql, [name, email, hash], (err, result) => {
-//                 if (err) {
-//                     console.log('Error inserting user:', err);
-//                     return res.status(500).json({ message: 'Failed to register user' });
-//                 } else {
-//                     return res.redirect('/login.html');
-
-//                 }
-//             });
-//         });
-//     });
-// });
 
 
 // Handle signup form submission with password hashing
@@ -271,6 +220,47 @@ app.post('/login', (req, res) => {
         });
     });
 });
+
+
+
+//public form from phone
+// Set up storage engine for multer (to handle file uploads)
+const storage = multer.diskStorage({
+    destination: './uploads',  // Adjust this path for your project
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname)); // Add timestamp to filename
+    }
+});
+
+const upload = multer({ storage: storage }).single('video'); // Handling video upload
+
+app.post('/submit-crime', (req, res) => {
+    upload(req, res, (err) => {
+        if (err) {
+            return res.status(500).json({ message: 'Failed to upload video' });
+        }
+
+        const { name, phoneNo, crimeType, latitude, longitude, date, time, address } = req.body;
+        const videoPath = req.file ? req.file.filename : null;
+
+        const insertCrimeSql = `INSERT INTO publicregistration (name, phone_no, crime_type, video, latitude, longitude, date, time, location)
+                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+        db.query(insertCrimeSql, [name, phoneNo, crimeType, videoPath, latitude, longitude, date, time, address], (err, result) => {
+            if (err) {
+                console.log('Error inserting crime report:', err);
+                return res.status(500).json({ message: 'Server error' });
+            }
+
+            return res.status(200).json({ success: true, message: 'Crime reported successfully!' });
+        });
+    });
+});
+
+
+
+
+
 
 
 

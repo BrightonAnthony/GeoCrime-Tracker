@@ -10,7 +10,7 @@
 
 <div class="container" id="polog-container">
     <h2>Crime Report</h2>
-    <form id="crimeForm">
+    <form id="crimeForm" method="POST" action="/submit-crime" enctype="multipart/form-data">
         <div class="form-group">
             <label for="polog-pname"> Name</label>
             <input type="text" id="polog-pname" placeholder="Enter your Name" required>
@@ -42,12 +42,12 @@
         </div>
 
         <div class="form-group">
-            <label for="latitude">latitude</label >
-            <input type="text" id="latitude" name="latitude" readonly > <!-- hidden-->
+            <label for="latitude"></label >
+            <input type="text" id="latitude" name="latitude" readonly hidden>
         </div>
         <div class="form-group">
-            <label for="longitude">Longitude</label>
-            <input type="text" id="longitude" name="longitude" readonly>
+            <label for="longitude"></label>
+            <input type="text" id="longitude" name="longitude" readonly hidden>
         </div>
         <div class="form-group">
             <label for="polog-date">Date</label>
@@ -108,6 +108,42 @@
         }
     });
 </script>
+<script>
+    document.getElementById('crimeForm').addEventListener('submit', function (event) {
+    event.preventDefault();
 
+    // Create a FormData object to send file and other form data
+    const formData = new FormData();
+    formData.append('name', document.getElementById('polog-pname').value);
+    formData.append('phoneNo', document.getElementById('polog-phoneNo').value);
+    formData.append('crimeType', document.getElementById('polog-crimetype').value);
+    formData.append('video', document.getElementById('polog-video').files[0]); // File upload
+    formData.append('latitude', document.getElementById('latitude').value);
+    formData.append('longitude', document.getElementById('longitude').value);
+    formData.append('date', document.getElementById('polog-date').value);
+    formData.append('time', document.getElementById('polog-time').value);
+    formData.append('address', document.getElementById('address').value);
+
+    // Send form data to the server using fetch
+    fetch('/submit-crime', {
+        method: 'POST',
+        body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Crime reported successfully!');
+            window.location.href = '/publicform.html'; // Redirect on success
+        } else {
+            alert('Error reporting crime: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+    });
+});
+
+</script>
 </body>
 </html>
