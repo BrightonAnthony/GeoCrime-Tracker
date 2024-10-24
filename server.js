@@ -7,7 +7,7 @@ const path = require('path');
 const http = require('http');
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
-
+const fs = require('fs');
 
 // // Serve static files from the 'public' folder
 app.use(express.static(path.join(__dirname, 'public')));
@@ -254,6 +254,114 @@ app.post('/submit-crime', (req, res) => {
 
             return res.status(200).json({ success: true, message: 'Crime reported successfully!' });
         });
+    });
+});
+
+
+
+
+
+//display the public registration
+app.get('/fetch-public-registrations', (req, res) => {
+    const fetchSql = `SELECT id, location, crime_type, video FROM publicregistration WHERE flag = 0`;
+    
+    db.query(fetchSql, (err, results) => {
+        if (err) {
+            console.error('Error fetching public registrations:', err);
+            return res.status(500).json({ message: 'Failed to fetch records' });
+        }
+        res.json(results); // Send the fetched data to the client
+    });
+});
+
+
+app.delete('/delete-record/:id', (req, res) => {
+    const deleteSql = `DELETE FROM publicregistration WHERE id = ?`;
+    const recordId = req.params.id;
+
+    db.query(deleteSql, [recordId], (err, result) => {
+        if (err) {
+            console.error('Error deleting record:', err);
+            return res.status(500).json({ success: false, message: 'Failed to delete record' });
+        }
+        res.json({ success: true, message: 'Record deleted successfully' });
+    });
+});
+
+
+
+app.post('/approve-record/:id', (req, res) => {
+    const editflag = `update publicregistration SET flag = 1 WHERE id = ?`;
+    const recordId = req.params.id;
+
+    db.query(editflag, [recordId], (err, result) => {
+        if (err) {
+            console.error('Error approving record:', err);
+            return res.status(500).json({ success: false, message: 'Failed to approve record' });
+        }
+        res.json({ success: true, message: 'Record approved successfully' });
+    
+    });
+});
+
+
+
+
+// Route to serve video from the 'upload' folder
+app.get('/video/:id', (req, res) => {
+    const recordId = req.params.id;
+
+    // Query to get the video filename from the database
+    const fetchVideoSql = `SELECT video FROM publicregistration WHERE id = ?`;
+
+    db.query(fetchVideoSql, [recordId], (err, results) => {
+        if (err) {
+            console.error('Error fetching video:', err);
+            return res.status(500).send('Error fetching video');
+        }
+
+        if (results.length === 0) {
+            return res.status(404).send('Video not found');
+        }
+
+        const videoFilename = results[0].video; // Assuming 'video' stores the filename (e.g., 'video.mp4')
+
+        // Construct the full path to the video file in the 'upload' folder
+        const videoPath = path.join(__dirname, 'uploads', videoFilename);
+
+        // Check if the video file exists
+        fs.access(videoPath, fs.constants.F_OK, (err) => {
+            if (err) {
+                console.error('Video file does not exist:', videoPath);
+                return res.status(404).send('Video not found');
+            }
+
+            // Send the video file as a response
+            res.sendFile(videoPath, (err) => {
+                if (err) {
+                    console.error('Error sending video file:', err);
+                    return res.status(500).send('Error sending video');
+                }
+            });
+        });
+    });
+});
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
+
+
+
+// fetching from db
+app.get('/locations', (req, res) => {
+    const query = 'SELECT latitude, longitude, crime_type FROM publicregistration where flag=0'; // Example query
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching location data:', err);
+            return res.status(500).json({ error: 'Database query error' });
+        }
+        res.json(results); // Send the lat/lng data to the frontend
     });
 });
 

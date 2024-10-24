@@ -128,8 +128,9 @@ body {
 
 
 .approval{
-    width: 860px;
-    background: #343a40;
+    width: 560px;
+    max-height: 86vh;
+    background: #bcbfc2;
     padding: 5px;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
     overflow-y: auto;
@@ -162,3 +163,57 @@ body {
     left: 10px;
     font-size: 0.9em;
 }
+
+
+
+/* Common button styles */
+.record button {
+    padding: 10px 15px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 5px;  /* Space between buttons */
+    transition: background-color 0.3s ease; /* Smooth hover effect */
+    color: white;
+    font-weight: 600;
+    margin: 10px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+/* Specific styles for each button */
+.view-btn {
+    background-color: #2589f5; /* Blue background */
+}
+
+.view-btn:hover {
+    background-color: #0e6acd; /* Darker blue on hover */
+}
+
+.delete-btn {
+    background-color: #ef4455; /* Red background */
+}
+
+.delete-btn:hover {
+    background-color: #c82333; /* Darker red on hover */
+}
+
+.approve-btn {
+    background-color: #13cb3e; /* Green background */
+}
+
+.approve-btn:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+/* Container styling (optional) */
+.record {
+    border: 1px solid #fff;
+    margin-bottom: 5px;
+    padding: 10px;
+    color: white;
+    background-color: #333;
+    border-radius: 8px;
+}
+
