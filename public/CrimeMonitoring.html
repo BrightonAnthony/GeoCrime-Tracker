@@ -41,7 +41,7 @@
     
             <!-- Main Content -->
             <div class="main-content">
-                <h5 class="text">Real-Time Crime Monitoring</h5>
+                <h5 class="text"> Real-Time Crime Monitoring <span class="inline-text"> Remaining Crime Verification: <span id="crimeCount">0</span></span> </h5>
                 <!-- Leaflet Map -->
                 <div class="map_app">
                     <div id="map"></div>
@@ -138,6 +138,21 @@
                 });
         }
     }
+
+
+
+
+
+
+    fetch('/crime-count')
+        .then(response => response.json())
+        .then(data => {
+            // Display the count in the span
+            document.getElementById('crimeCount').innerText = data.crimeCount;
+            })
+            .catch(error => {
+                console.error('Error fetching crime count:', error);
+        });
 </script>
 
 

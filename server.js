@@ -353,7 +353,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 
-// fetching from db
+// fetching from db for marker
 app.get('/locations', (req, res) => {
     const query = 'SELECT latitude, longitude, crime_type FROM publicregistration where flag=0'; // Example query
     db.query(query, (err, results) => {
@@ -367,7 +367,19 @@ app.get('/locations', (req, res) => {
 
 
 
-
+// Route to get count of crimes with flag=0
+app.get('/crime-count', (req, res) => {
+    const query = 'SELECT COUNT(*) AS crimeCount FROM publicregistration WHERE flag=0';
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching data from MySQL:', err);
+            res.status(500).send('Error fetching data');
+        } else {
+            const count = results[0].crimeCount;
+            res.json({ crimeCount: count });
+        }
+    });
+});
 
 
 
