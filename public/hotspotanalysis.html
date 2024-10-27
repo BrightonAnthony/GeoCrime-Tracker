@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Crime Hotspot Analysis</title>
-  <link rel="stylesheet" href="CSS_file/main.css">
+  <link rel="stylesheet" href="CSS_file/hotspot.css">
   <!-- Bootstrap CSS -->
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -41,7 +41,29 @@
     
             <!-- Main Content -->
             <div class="main-content">
-                <h5 class="text">Crime Hotspot Analysis</h5>
+                <div id="filter-container">
+                    <h5 class="text">Crime Hotspot Analysis</h5>
+                    <div id="filters">
+                        <label for="crime-type">Crime Type:</label>
+                        <select id="crime-type">
+                            <option value="all">All</option>
+                            <option value="theft">Theft</option>
+                            <option value="assault">Assault</option>
+                            <option value="domesticViolence">Domestic Violence</option>
+
+                            <!-- Add more options as needed -->
+                        </select>
+                    
+                        <label for="start-date">Start Date:</label>
+                        <input type="date" id="start-date" >
+                    
+                        <label for="end-date">End Date:</label>
+                        <input type="date" id="end-date">
+                    
+                        <button id="btn-flt" onclick="applyFilters()">Apply Filters</button>
+                    </div>
+                </div>
+                
                 <!-- Leaflet Map -->
                 <div id="map"></div>
                 
@@ -58,6 +80,94 @@
 
 <!-- Leaflet Heatmap Plugin -->
 <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+
+
+<script>
+    // Store data for both police and public hotspots
+    let policeCrimeData = [];
+    let publicCrimeData = [];
+    
+    // Fetch police data initially
+    fetch('/hotspot_police')
+        .then(response => response.json())
+        .then(data => {
+            policeCrimeData = data; // Store police data for filtering
+            addMarkers1(policeCrimeData); // Initial render
+        })
+        .catch(error => console.error('Error fetching police data:', error));
+    
+    // Fetch public data initially
+    fetch('/hotspot_public')
+        .then(response => response.json())
+        .then(data => {
+            publicCrimeData = data; // Store public data for filtering
+            addMarkers2(publicCrimeData); // Initial render
+        })
+        .catch(error => console.error('Error fetching public data:', error));
+
+    // Function to add police markers to the map
+    function addMarkers1(data) {
+        hotspotLayerpolice.clearLayers(); // Clear existing markers
+        data.forEach(hotspot => {
+            const marker = pointToCustomMarker([hotspot.latitude, hotspot.longitude], hotspot.crime_type);
+            marker.addTo(hotspotLayerpolice);
+        });
+    }
+
+    // Function to add public markers to the map
+    function addMarkers2(data) {
+        hotspotLayerpublic.clearLayers(); // Clear existing markers
+        data.forEach(hotspot => {
+            const marker = pointToCustomMarker([hotspot.latitude, hotspot.longitude], hotspot.crime_type);
+            marker.addTo(hotspotLayerpublic);
+        });
+    }
+
+    // Filter and update markers based on form inputs
+    function applyFilters() {
+        const crimeType = document.getElementById('crime-type').value;
+        const startDateInput = document.getElementById('start-date').value;
+        const endDateInput = document.getElementById('end-date').value;
+
+        // Convert input dates to Date objects if provided
+        const startDate = startDateInput ? new Date(startDateInput) : null;
+        const endDate = endDateInput ? new Date(endDateInput) : null;
+
+        // Filter police data
+        const filteredPoliceData = policeCrimeData.filter(hotspot => {
+            const crimeDate = new Date(hotspot.date); // Assuming each record has a 'date' field
+            const matchesType = (crimeType === 'all') || (hotspot.crime_type === crimeType);
+            const withinDateRange = (!startDate || crimeDate >= startDate) &&
+                                    (!endDate || crimeDate <= endDate);
+            return matchesType && withinDateRange;
+        });
+
+        // Filter public data
+        const filteredPublicData = publicCrimeData.filter(hotspot => {
+            const crimeDate = new Date(hotspot.date); // Assuming each record has a 'date' field
+            const matchesType = (crimeType === 'all') || (hotspot.crime_type === crimeType);
+            const withinDateRange = (!startDate || crimeDate >= startDate) &&
+                                    (!endDate || crimeDate <= endDate);
+            return matchesType && withinDateRange;
+        });
+
+        // Check filtering results in the console
+        console.log("Filtered Police Data:", filteredPoliceData);
+        console.log("Filtered Public Data:", filteredPublicData);
+
+        // Update markers with filtered data
+        addMarkers1(filteredPoliceData);
+        addMarkers2(filteredPublicData);
+    }
+
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const today = new Date().toISOString().split("T")[0]; // Get current date in YYYY-MM-DD format
+        document.getElementById('end-date').max = today;
+    });
+</script>
+
+
 
 <script>
     // Initialize the map and set its view
@@ -90,15 +200,6 @@
         };
     }
 
-    function style3(feature) {
-        return {
-            color: "#005666",
-            weight: 1,
-            opacity: 0.65
-        };
-    }
-
-
 
 
 
@@ -120,29 +221,20 @@
     }
 
 
-    function onEachFeature3(feature, layer) {
-        if (feature.properties && feature.properties.name) {
-            layer.bindPopup("<strong> Crime :</strong> " + feature.properties.name);
-        } else {
-            console.warn('Feature properties not found for layer 3:', feature);
-        }
-    }
-    
 
 
 
-
-    // Create a custom icon with a specific color
+     // Create a custom icon with a specific color
     var customIcon = L.icon({
         iconUrl: 'pics/redcrime.png',  // Path to custom marker icon image
         iconSize: [20, 20],    // Icon size
         iconAnchor: [10, 20] // Point where the icon is anchored (center-bottom)
     });
 
-    // Use the custom icon in pointToLayer
-    function pointToCustomMarker(feature, latlng) {
+    // Function to create a custom marker using the custom icon
+    function pointToCustomMarker(latlng, crimeType) {
         return L.marker(latlng, { icon: customIcon })
-            .bindPopup(feature.properties.description); // Bind popup with description
+            .bindPopup(`<b>Crime Type:</b> ${crimeType || 'Unknown'}`); // Bind popup with crime type
     }
 
 
@@ -193,15 +285,14 @@
     var geojsonLayer2 = L.geoJSON(null, {
         style: style2,
         onEachFeature: onEachFeature2
-    }).addTo(map);  // Add layer to map immediately
+    });  // Add layer to map immediately
 
-    var geojsonLayer3 = L.geoJSON(null, {
-        style: style3,
-        onEachFeature: onEachFeature3,
-        pointToLayer: pointToCustomMarkerAndCircle,
-        //pointToLayer: pointToCircle // Use pointToCircle function for points
-    }).addTo(map);  // Add layer to map immediately
-
+    
+    // Define a layer group for the hotspot markers
+    var hotspotLayerpolice = L.layerGroup().addTo(map);
+    
+    // Define a layer group for the hotspot markers
+    var hotspotLayerpublic = L.layerGroup().addTo(map);
     
 
 
@@ -221,14 +312,31 @@
             })
             .catch(error => console.error('Error loading GeoJSON 2:', error));
 
-    fetch('geojson/Point_Crime_Synthetic.geojson')
-            .then(response => response.json())
-            .then(data => {
-                geojsonLayer3.addData(data);
-            })
-            .catch(error => console.error('Error loading GeoJSON 3:', error));
+    fetch('/hotspot_police')
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(hotspot => {
+                // Add a marker for each location
+                const marker = pointToCustomMarker([hotspot.latitude, hotspot.longitude], hotspot.crime_type);
+                marker.addTo(hotspotLayerpolice); // Add the custom marker to the map
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching location data:', error);
+    });
 
-    
+    fetch('/hotspot_public')
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(hotspot => {
+                // Add a marker for each location
+                const marker = pointToCustomMarker([hotspot.latitude, hotspot.longitude], hotspot.crime_type);
+                marker.addTo(hotspotLayerpublic); // Add the custom marker to the map
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching location data:', error);
+    });
 
     
 
@@ -236,7 +344,8 @@
     var baseMaps = {
         "Police Stations": geojsonLayer1,
         "Station Jurisdiction": geojsonLayer2,
-        "Crime": geojsonLayer3 // Initially, this layer will be empty until data is loaded
+        "Police Registered Crime": hotspotLayerpolice,
+        "Public Registered Crime": hotspotLayerpublic,
     };
     
     // Layer control to toggle layers

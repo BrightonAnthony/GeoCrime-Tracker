@@ -384,6 +384,35 @@ app.get('/crime-count', (req, res) => {
 
 
 
+// fetching from db for marker
+app.get('/hotspot_police', (req, res) => {
+    const query = 'SELECT latitude, longitude, crime_type, date FROM policeregistration';
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching location data:', err);
+            return res.status(500).json({ error: 'Database query error' });
+        }
+        res.json(results); // Send the lat/lng data to the frontend
+    });
+});
+
+
+app.get('/hotspot_public', (req, res) => {
+    const query = 'SELECT latitude, longitude, crime_type, date FROM publicregistration where flag=1';
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching location data:', err);
+            return res.status(500).json({ error: 'Database query error' });
+        }
+        res.json(results); // Send the lat/lng data to the frontend
+    });
+});
+
+
+
+
+
+
 
 // Start the server and bind it to 0.0.0.0 to allow access from other devices on the network
 app.listen(3000, '0.0.0.0', () => {
