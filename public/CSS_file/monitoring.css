@@ -166,7 +166,7 @@ body {
 /* Responsive design for sidebar */
 @media (max-width: 768px) {
     #sidebar {
-        width: 30%; /* Full width on smaller screens */
+        width: 100%; /* Full width on smaller screens */
         padding: 15px;
     }
 }

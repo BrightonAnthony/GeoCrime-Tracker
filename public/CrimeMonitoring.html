@@ -12,7 +12,9 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet-heatmap@0.1.0/dist/leaflet-heatmap.css" />
 
-
+  <!-- Leaflet Control Geocoder for the search bar -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    
 </head>
 <body>
     <div id="header">
@@ -171,6 +173,9 @@
 <!-- Leaflet Heatmap Plugin -->
 <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
 
+<!-- Leaflet Control Geocoder for the search bar -->
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
 <script>
     // Initialize the map and set its view
     var map = L.map('map').setView([19.0760, 72.8777], 11);  // Centered on Mumbai
@@ -321,7 +326,33 @@
             console.error('Error fetching location data:', error);
     });
 
+    // Add geocoder control (search bar)
+    var geocoder = L.Control.geocoder({
+        defaultMarkGeocode: false  // Do not mark location automatically
+    }).on('markgeocode', function(e) {
+        var bbox = e.geocode.bbox;
+        var poly = L.polygon([
+            [bbox.getSouthEast().lat, bbox.getSouthEast().lng],
+            [bbox.getNorthEast().lat, bbox.getNorthEast().lng],
+            [bbox.getNorthWest().lat, bbox.getNorthWest().lng],
+            [bbox.getSouthWest().lat, bbox.getSouthWest().lng]
+        ]).addTo(map);
+        
+        // Zoom the map to the selected location
+        map.fitBounds(poly.getBounds());
+
+        // Optionally, show a marker at the location
+        var latlng = e.geocode.center;
+        L.marker(latlng).addTo(map)
+            .bindPopup("<strong>Location Found:</strong><br>" + e.geocode.name)
+            .openPopup();
+        }).addTo(map);  // Add the geocoder control to the map
+
+
     
+
+
+
 
     // Add base layers to the layer control
     var baseMaps = {
