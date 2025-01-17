@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Criminal Behavior Patterns</title>
-  <link rel="stylesheet" href="CSS_file/main.css">
+  <link rel="stylesheet" href="CSS_file/criminalpatt.css">
   <!-- Bootstrap CSS -->
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -44,11 +44,21 @@
     
             <!-- Main Content -->
             <div class="main-content">
-                <h5 class="text">Criminal Behavior Patterns</h5>
+                <div id="search-container">
+                    <h5 class="text">Criminal Behavior Patterns</h5>
+                    <div id="search">
+                    
+                        <input type="text" id="cri-name" placeholder=" Criminal Name">
+                    
+                        <button id="btn-sc" onclick="search()">Search</button>
+                    </div>
+                </div>
+                
                 <!-- Leaflet Map -->
                 <div id="map"></div>
                 
             </div>
+            
         </div>
     
 
@@ -280,7 +290,7 @@
     var baseMaps = {
         "Police Stations": geojsonLayer1,
         "Station Jurisdiction": geojsonLayer2,
-        "Crime": geojsonLayer3 // Initially, this layer will be empty until data is loaded
+        // "Crime": geojsonLayer3 // Initially, this layer will be empty until data is loaded
     };
     
     // Layer control to toggle layers

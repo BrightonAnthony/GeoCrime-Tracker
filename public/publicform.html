@@ -41,6 +41,8 @@
             <input type="file" id="polog-video" accept="video/*" capture="environment" required>
         </div>
 
+        <button id="retryLocation" style="display: none;">Retry Location</button>
+
         <div class="form-group">
             <label for="latitude"></label >
             <input type="text" id="latitude" name="latitude" readonly hidden>
@@ -62,12 +64,31 @@
             <input type="text" id="address" name="address" readonly>
         </div>
 
-        <button type="submit" class="btn">Send</button>
+        <button type="submit" id="sendButton" class="btn">Send</button>
     </form>
 </div>
 
 <script>
     document.getElementById('polog-video').addEventListener('change', function () {
+    gatherLocationData();
+    });
+
+    document.getElementById('retryLocation').addEventListener('click', function (event) {
+    event.preventDefault(); // Prevent default behavior (if inside a form)
+    gatherLocationData();
+    });
+
+
+    function gatherLocationData() {
+        // Disable the send button
+        const sendButton = document.getElementById('sendButton');
+        sendButton.disabled = true;
+
+        // Set temporary fetching messages
+        document.getElementById('polog-date').value = 'Fetching...';
+        document.getElementById('polog-time').value = 'Fetching...';
+        document.getElementById('address').value = 'Fetching address...';
+
         // Check if browser supports Geolocation
         if (navigator.geolocation) {
             // Get the current position
@@ -88,11 +109,14 @@
                         if (data && data.display_name) {
                             // Set the address field in the form
                             document.getElementById('address').value = data.display_name;
+                            // Enable the send button once address is fetched
+                            sendButton.disabled = false;
                         } else {
-                            alert('No address found for this location.');
+                            document.getElementById('address').value = 'Address not found';
                         }
                     })
                     .catch(error => {
+                        document.getElementById('address').value = 'Error fetching address';
                         alert('Error fetching address: ' + error.message);
                     });
 
@@ -100,17 +124,40 @@
                 const now = new Date();
                 document.getElementById('polog-date').value = now.toISOString().split('T')[0]; // YYYY-MM-DD
                 document.getElementById('polog-time').value = now.toTimeString().split(' ')[0]; // HH:MM:SS
+
+                // Hide the retry button if location is fetched successfully
+                document.getElementById('retryLocation').style.display = 'none';
             }, function (error) {
-                alert('Error getting location: ' + error.message);
+                alert('Please enable your device location\n and click "Retry Location"');
+                // Show the retry button if location fetch fails
+                document.getElementById('retryLocation').style.display = 'inline-block';
+
+                // Reset fetching text to empty if location fetch fails
+                document.getElementById('polog-date').value = '';
+                document.getElementById('polog-time').value = '';
+                document.getElementById('address').value = '';
+                // Keep the send button disabled if location fetch fails
+                sendButton.disabled = true;
             });
         } else {
             alert('Geolocation is not supported by this browser.');
+            document.getElementById('polog-date').value = '';
+            document.getElementById('polog-time').value = '';
+            document.getElementById('address').value = '';
+            // Keep the send button disabled
+            sendButton.disabled = true;
         }
-    });
+    }
 </script>
 <script>
     document.getElementById('crimeForm').addEventListener('submit', function (event) {
     event.preventDefault();
+
+    const sendButton = document.getElementById('sendButton');
+
+    // Disable the button to prevent multiple submissions
+    sendButton.disabled = true;
+    sendButton.innerText = 'Sending...';
 
     // Create a FormData object to send file and other form data
     const formData = new FormData();
@@ -141,6 +188,11 @@
     .catch(error => {
         console.error('Error:', error);
         alert('An error occurred. Please try again.');
+    })
+    .finally(() => {
+        // Re-enable the button after response or error
+        sendButton.disabled = false;
+        sendButton.innerText = 'Send';
     });
 });
 

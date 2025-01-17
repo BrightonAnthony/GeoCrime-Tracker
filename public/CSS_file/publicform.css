@@ -70,3 +70,22 @@ textarea:focus {
     color: white;
     font-weight: bold;
 }
+
+#retryLocation{
+    padding: 10px 15px;
+    background-color: #2589f5;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#retryLocation:hover {
+    background-color: #0e6acd;
+    color: white;
+    font-weight: bold;
+}

@@ -175,11 +175,12 @@ body {
     #sidebar {
         /* min-width: auto; */
         width: 20%;
+        min-width: min-content;
         padding: 15px;
     }
     #policelog {
         top: 109px;
-        right: 1px;
+        left: 180px;
         width: 270px;
         height: 490px;
     }

@@ -206,6 +206,7 @@ select:focus {
 @media (max-width: 768px) {
     #sidebar {
         width: 30%; /* Full width on smaller screens */
+        min-width: min-content;
         padding: 15px;
     }
 }
