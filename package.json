@@ -1,0 +1,40 @@
+{
+  "name": "geocrime-tracker",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vaishnavim614/GeoCrime-Tracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vaishnavim614/GeoCrime-Tracker/issues"
+  },
+  "homepage": "https://github.com/vaishnavim614/GeoCrime-Tracker#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.3",
+    "child_process": "^1.0.2",
+    "cors": "^2.8.5",
+    "dns": "^0.1.2",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "multer": "^1.4.5-lts.1",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.11.3",
+    "node": "^20.18.0",
+    "nodemailer": "^6.10.0",
+    "nodemon": "^3.1.10",
+    "python-shell": "^5.0.0",
+    "twilio": "^5.4.3",
+    "ws": "^8.18.0"
+  },
+  "description": "<h1>GeoCrime-Tracker</h1>"
+}
