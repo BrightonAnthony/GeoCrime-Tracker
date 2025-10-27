@@ -1,0 +1,121 @@
+.container {
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 600px;
+    height: auto;
+    margin: auto;
+    overflow-y: auto;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    
+}
+
+h2{
+    margin: 0;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="time"],
+input[type="tel"],
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Ensures padding is included in the width */
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+input[type="time"]:focus,
+input[type="tel"]:focus,
+select:focus,
+textarea:focus {
+    border-color: #007BFF; /* Change border color on focus */
+    outline: none; /* Remove default outline */
+}
+
+.btn {
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+.btn:hover {
+    background-color: #2c772f;
+    color: white;
+    font-weight: bold;
+}
+
+#retryLocation{
+    padding: 10px 15px;
+    background-color: #2589f5;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#retryLocation:hover {
+    background-color: #0e6acd;
+    color: white;
+    font-weight: bold;
+}
+
+#otp-btn{
+    padding: 5px 10px;
+    margin-top: 5px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+#otp-btn:hover {
+    background-color: #2c772f;
+    color: white;
+    font-weight: bold;
+}
+
+#verify-otp-btn{
+    padding: 6px 10px;
+    margin-top: 5px;
+    background-color: #ef4455;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+#verify-otp-btn:hover {
+    background-color: #c82333;
+    color: white;
+    font-weight: bold;
+}

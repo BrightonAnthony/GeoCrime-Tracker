@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Type Selection</title>
+    <link href="CSS_file/login_signup.css" rel="stylesheet">
+    <style>
+        
+        
+    </style>
+</head>
+<body>
+
+<div class="container-ind">
+    <h1>Select User Type</h1>
+    <button id="bt-ind" onclick="redirectTo('public')">Public</button>
+    <button id="bt-ind" onclick="redirectTo('police')">Police</button>
+</div>
+
+<script>
+    function redirectTo(userType) {
+        if (userType === 'public') {
+            // Redirect to public interface
+            window.location.href = 'publicform.html'; // Change to your public interface page
+        } else if (userType === 'police') {
+            // Redirect to police interface
+            window.location.href = 'login.html'; // Change to your police interface page
+        }
+    }
+</script>
+
+</body>
+</html>

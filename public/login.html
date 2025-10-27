@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link href="CSS_file/login_signup.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Login Form -->
+    <div class="container" id="login-container">
+        <h2>LOGIN</h2>
+        <form id="login-form" action="/login" method="POST">
+            <div class="form-group">
+                <label for="login-email">Email</label>
+                <input type="email" id="login-email" name="email" placeholder="Enter your email" required>
+            </div>
+            <div class="form-group" id="loginpasswordcont">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" name="password" placeholder="Enter your password" required>
+            </div>
+            <div id="forgotpasswordcont">
+                <a href="forgotpassword.html" id="forgotpassword">Forgot Password?</a>
+            </div>
+                <button type="submit" class="btn">Login</button>
+            <div class="switch-link">
+                Don't have an account? <a href="signup.html">Sign up</a>
+            </div>
+        </form>
+    </div>
+
+
+
+    <script>
+        // Function to handle form submission
+        function submitLoginForm(event) {
+            event.preventDefault(); // Prevent the default form submission
+    
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+    
+            // Make a POST request to the login route
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'Login successful') {
+                    alert(data.message);  // Show a success alert
+                    window.location.href = data.redirect;  // Redirect to index.html after success
+                } else {
+                    alert(data.message);  // Show error message in an alert
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
+        }
+    
+        // Attach the function to the form's submit event
+        document.getElementById('login-form').addEventListener('submit', submitLoginForm);
+    </script>
+    
+    
+</body>
+</html>

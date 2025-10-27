@@ -1,0 +1,287 @@
+/* General Body Styling */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column; /* Makes content flow vertically */
+    height: 100vh; /* Full viewport height */
+    background-color: #909294 !important;;
+}
+
+/* Header */
+#header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #343a40; /* Dark background */
+    color: #fff; /* White text color */
+    padding: 10px 30px;
+    position: sticky;
+    top: 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    z-index: 1000;
+    height: 60px;
+    width: 100%; /* Ensure header takes full width */
+    
+}
+
+/* Center section (GeoCrime text) */
+.header-center {
+    flex-grow: 1;
+    text-align: center;
+    font-size: 26px;
+    font-weight: bold;
+    font-family: 'Arial', sans-serif;
+    letter-spacing: 1px;
+}
+
+/* Right section (icons) */
+.header-right {
+    display: flex;
+    align-items: center;
+}
+
+.header-right i {
+    font-size: 28px;
+    margin-left: 25px; /* Space between icons */
+    cursor: pointer;
+    color: #fff;
+}
+
+.header-right i:hover {
+    font-size: 28px;
+    color: #909294; /* Change color on hover */
+    transition: color 0.3s ease;
+}
+
+/* Content Wrapper  */
+.content {
+    display: flex;
+    flex-grow: 1; /* Takes remaining height after the header */
+    margin-top: 2px; /* Offset content from header */
+}
+
+
+.text {
+    position: relative; /* Make the h5 the containing block */
+}
+
+.inline-text {
+    position: absolute;
+    right: 60px; /* Align the span to the right */
+}
+
+
+
+/* Sidebar Styling */
+#sidebar {
+    width: 160px;
+    background: #343a40;
+    padding: 5px;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
+    overflow-y: auto;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    margin-bottom: 5px;
+}
+
+#sidebar hr {
+    background-color: #909294;
+    height: 1px;
+    margin: 5px;
+}
+
+#sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+#sidebar ul li {
+    padding: 8px 8px;
+    border-radius: 8px;
+    transition: background 0.3s ease, color 0.3s ease;
+    text-align: center;
+}
+
+#sidebar ul li:hover {
+    background: #909294;
+    /* color: #fff;  */
+}
+
+#CrimeMonitoringbox {
+    background: #909294;
+    /* color: #fff;  */
+}
+
+#sidebar ul li a {
+    text-decoration: none;
+    color: #ffffff;
+    display: block;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+#sidebar ul li a:hover {
+    color: #060606;
+}
+
+/* Main Content Area */
+.main-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Take up the remaining space after the sidebar */
+    padding: 5px;
+    padding-right: 0px;
+    padding-top: 10px;
+    
+}
+
+.map_app{
+    display: flex;
+    flex-grow: 1;
+    flex-direction: row;
+}
+
+
+.approval{
+    width: 560px;
+    max-height: 85vh;
+    background: #bcbfc2;
+    padding: 5px;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
+    overflow-y: auto;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    /* margin-bottom: 1px; */
+    margin-left: 5px;
+    
+}
+/* Responsive design for sidebar */
+@media (max-width: 768px) {
+    #sidebar {
+        width: 50%; /* Full width on smaller screens */
+        min-width: min-content;
+        padding: 15px;
+    }
+}
+
+/* Custom styling for the MAP */
+#map {
+    flex-grow: 1;
+    width: 100%;
+    border-radius: 8px;
+    margin-right: 1px;
+}
+
+/* Footer */
+.footer {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    font-size: 0.9em;
+}
+
+
+
+/* Common button styles */
+.record button {
+    padding: 8px 10px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 2px;  /* Space between buttons */
+    transition: background-color 0.3s ease; /* Smooth hover effect */
+    color: white;
+    font-weight: 600;
+    margin: 4px;
+    margin-bottom: 2px;
+    margin-top: 2px;
+}
+
+.record p {
+    margin: 3px;
+}
+
+/* Specific styles for each button */
+.view-btn {
+    background-color: #2589f5; /* Blue background */
+}
+
+.view-btn:hover {
+    background-color: #0e6acd; /* Darker blue on hover */
+}
+
+.delete-btn {
+    background-color: #ef4455; /* Red background */
+}
+
+.delete-btn:hover {
+    background-color: #c82333; /* Darker red on hover */
+}
+
+.approve-btn {
+    background-color: #13cb3e; /* Green background */
+}
+
+.approve-btn:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+.view-path-btn {
+    background-color: #c9d707; /* Green background */
+}
+
+.view-path-btn:hover {
+    background-color: #9ea905; /* Darker green on hover */
+}
+
+/* Container styling (optional) */
+.record {
+    border: 1px solid #fff;
+    margin-bottom: 5px;
+    padding: 8px;
+    color: white;
+    background-color: #333;
+    border-radius: 8px;
+}
+
+#profile-popup {
+    display: none;
+    position: absolute;
+    top: 12px;
+    right: 65px;
+    /* width: 265px; */
+    text-align: left;
+    background-color: #fff;
+    padding: 10px;
+    padding-top: 0px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.profile-info p {
+    margin: 5px 0;
+}
+
+#logout-btn {
+    text-align: center;
+    background-color: #c82333; /* Red background */
+    padding: 10px 15px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #ffffff;
+    font-weight: 600;
+    margin-top: 5px;
+    width: 100%;
+}
+
+#logout-btn:hover {
+    background-color: #940a17; /* Darker red on hover */
+}
+

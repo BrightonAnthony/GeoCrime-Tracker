@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Predictive Crime Analysis</title>
+  <link rel="stylesheet" href="CSS_file/predictive.css">
+  <!-- Bootstrap CSS -->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    
+  <!-- Leaflet Control Geocoder for the search bar -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+  
+
+</head>
+<body>
+    <div id="header">
+        <div class="header-center">
+            GeoCrime Tracker
+        </div>
+        <div class="header-right">
+            <!-- <i class="bi bi-bell-fill"></i> Notification Bell Icon -->
+            <i class="bi bi-person-circle" id="profile-icon"></i> <!-- Profile Icon -->
+        </div>
+        
+    </div>
+    <div class="profile-popup" id="profile-popup">
+        <div class="profile-info">
+            <p id="user-name"><strong>Name:</strong> Loading...</p>
+            <p id="user-id"><strong>ID:</strong> Loading...</p>
+        </div>
+        <button id="logout-btn">Logout</button>
+    </div>
+    
+
+        <!-- Content Wrapper  -->
+        <div class="content">
+            <!-- Sidebar -->
+            <div id="sidebar">
+                <ul>
+                    <li id="CrimeMonitoringbox"><a href="CrimeMonitoring.html">Dashboard</a></li><hr>
+                    <li id="predictiveanalysisbox"><a href="predictiveanalysis.html">Predictive Crime Analysis</a></li><hr>
+                    <li id="hotspotanalysisbox"><a href="hotspotanalysis.html">Crime Hotspot Analysis</a></li><hr>
+                    <li id="criminalpatternbox"><a href="criminalpattern.html">Criminal Behavior Patterns</a></li><hr>
+                    <li id="policeFormbox"><a href="policeForm.html">Register New Crime</a></li>
+                </ul>
+            </div>
+    
+            <!-- Main Content -->
+            <div class="main-content">
+                <div id="filter-container">
+                    <h5 class="text">Predictive Crime Analysis</h5>
+                    <div id="filters">
+                        <label for="crime-type">Crime Type:</label>
+                        <select id="crime-type">
+                            <option value="all">- - - -</option>
+                            <option value="theft">Theft</option>
+                            <option value="assault">Assault</option>
+                            <option value="burglary">Burglary</option>
+                            <option value="fraud">Fraud</option>
+                            <option value="murder">Murder</option>
+                            <option value="vandalism">Vandalism</option>
+                            <option value="drugOffense">Drug Offense</option>
+                            <option value="domesticViolence">Domestic Violence</option>
+                            <!-- Add more options as needed -->
+                        </select>
+                    
+                        <label for="predict-date">Date:</label>
+                        <input type="date" id="predict-date" >
+                    
+                        <label for="predict-time">Time:</label>
+                        <input type="time" id="predict-time"  step="3600">
+
+                        <button id="predictCrimeBtn" >Predict Crime</button>
+                    
+                    </div>
+                </div>
+
+                <!-- Leaflet Map -->
+                <div id="map"></div>
+                
+            </div>
+        </div>
+    
+        
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<!-- Leaflet Heatmap Plugin -->
+<script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+
+<!-- Leaflet Control Geocoder for the search bar -->
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    // Initialize the map and set its view
+    window.map = L.map('map').setView([19.0760, 72.8777], 11);  // Centered on Mumbai
+
+    // Add OpenStreetMap tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 15,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">Brighton</a> contributors'
+    }).addTo(map);
+    //L.marker([19.0760, 72.8777]).addTo(map).bindPopup('Mumbai').openPopup();
+
+    
+
+    // Function to style the GeoJSON layers
+    function style1(feature) {
+        return {
+            color: "#ff7800",
+            
+            weight: 1,
+            opacity: 0.65
+        };
+    }
+
+    function style2(feature) {
+        return {
+            color: "#0057e7",
+            weight: 1,
+            opacity: 0.75
+        };
+    }
+
+        // Function to bind popup information for each feature
+    function onEachFeature1(feature, layer) {
+        if (feature.properties && feature.properties.Name) {
+            layer.bindPopup("<strong> Station :</strong> " + feature.properties.Name);
+        } else {
+            console.warn('Feature properties not found for layer 1:', feature);
+        }
+    }
+
+    function onEachFeature2(feature, layer) {
+        if (feature.properties && feature.properties.Name) {
+            layer.bindPopup("<strong> Juridiction :</strong> " + feature.properties.Name);
+        } else {
+            console.warn('Feature properties not found for layer 2:', feature);
+        }
+    }
+
+    // Define GeoJSON layers
+    var geojsonLayer1 = L.geoJSON(null, {
+        style: style1,
+        onEachFeature: onEachFeature1,
+        //pointToLayer: pointToCustomMarker
+    });  // Add layer to map immediately
+
+    var geojsonLayer2 = L.geoJSON(null, {
+        style: style2,
+        onEachFeature: onEachFeature2
+    });  // Add layer to map immediately
+
+    // var geojsonLayer3 = L.geoJSON(null, {
+    //     style: style3,
+    //     onEachFeature: onEachFeature3,
+    //     pointToLayer: pointToCustomMarkerAndCircle,
+    //     //pointToLayer: pointToCircle // Use pointToCircle function for points
+    // });  // Add layer to map immediately
+
+    
+    // Load GeoJSON files and add data to layers
+    fetch('geojson/Point_Police_Station.geojson')
+            .then(response => response.json())
+            .then(data => {
+                geojsonLayer1.addData(data);
+            })
+            .catch(error => console.error('Error loading GeoJSON 1:', error));
+
+    fetch('geojson/Police_Station_Jurdition.geojson')
+            .then(response => response.json())
+            .then(data => {
+                geojsonLayer2.addData(data);
+            })
+            .catch(error => console.error('Error loading GeoJSON 2:', error));
+
+    
+
+    // Add geocoder control (search bar)
+    var geocoder = L.Control.geocoder({
+        defaultMarkGeocode: false  // Do not mark location automatically
+    }).on('markgeocode', function(e) {
+        var bbox = e.geocode.bbox;
+        var poly = L.polygon([
+            [bbox.getSouthEast().lat, bbox.getSouthEast().lng],
+            [bbox.getNorthEast().lat, bbox.getNorthEast().lng],
+            [bbox.getNorthWest().lat, bbox.getNorthWest().lng],
+            [bbox.getSouthWest().lat, bbox.getSouthWest().lng]
+        ]).addTo(map);
+        
+        // Zoom the map to the selected location
+        map.fitBounds(poly.getBounds());
+
+        // Optionally, show a marker at the location
+        var latlng = e.geocode.center;
+        L.marker(latlng).addTo(map)
+            .bindPopup("<strong>Location Found:</strong><br>" + e.geocode.name)
+            .openPopup();
+        }).addTo(map);  // Add the geocoder control to the map
+
+
+    // Add base layers to the layer control
+    var baseMaps = {
+        "Police Stations": geojsonLayer1,
+        "Station Jurisdiction": geojsonLayer2,
+        //"Crime": geojsonLayer3 // Initially, this layer will be empty until data is loaded
+    };
+    
+    // Layer control to toggle layers
+    L.control.layers(null, baseMaps).addTo(map);
+});
+</script>
+
+<script>
+    document.getElementById('predictCrimeBtn').addEventListener('click', () => {
+        const button = document.getElementById("predictCrimeBtn");
+        button.disabled = true;
+        button.textContent = "Predicting..."; // Show loading text
+
+        const crimeType = document.getElementById("crime-type").value;
+        const selectedDate = document.getElementById("predict-date").value;
+        const selectedTime = document.getElementById("predict-time").value;
+        
+        if (crimeType === "all") {
+            alert("Please select crime type");
+            button.disabled = false;
+            button.textContent = "Predict Crime"; // Restore button
+            return;
+        }
+        if (!selectedDate) {
+            alert("Please select date.");
+            button.disabled = false;
+            button.textContent = "Predict Crime"; // Restore button
+            return;
+        }
+        if (!selectedTime) {
+            alert("Please select time.");
+            button.disabled = false;
+            button.textContent = "Predict Crime"; // Restore button
+            return;
+        }
+
+        const requestData = { crimeType, selectedDate, selectedTime };
+
+        fetch('/predict-crime', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Received prediction data:", data);
+
+            if (!Array.isArray(data)) {
+                console.error("Unexpected response format:", data);
+                alert("Error: Received unexpected response format.");
+            } else {
+                const heatData = data.map(d => [d.latitude, d.longitude, d.crime_probability]);
+
+                // Remove old heatmap if exists
+                if (window.heatLayer) {
+                    map.removeLayer(window.heatLayer);
+                }
+                // Add new heatmap layer
+                window.heatLayer = L.heatLayer(heatData, {
+                    radius: 20,
+                    blur: 15,
+                    maxZoom: 12,
+                    gradient: {
+                        0.2: '#00FFFF',
+                        0.4: 'lime',
+                        0.7: '#FFD700',
+                        1.0: '#FF1493'
+                    }
+                }).addTo(map);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while predicting crime.');
+        })
+        .finally(() => {
+            button.disabled = false;
+            button.textContent = "Predict Crime"; // Restore button
+        });
+    });
+
+
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const profileIcon = document.getElementById("profile-icon");
+        const profilePopup = document.getElementById("profile-popup");
+        const userName = document.getElementById("user-name");
+        const userId = document.getElementById("user-id");
+
+        // Fetch user info from the server
+        function fetchUserInfo() {
+            fetch('/get-user')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.user) {
+                        userName.innerHTML = `<strong>Name:</strong> ${data.user.name}`;
+                        userId.innerHTML = `<strong>ID:</strong> ${data.user.id}`;
+                    } else {
+                        userName.innerHTML = `<strong>Name:</strong> Guest`;
+                        userId.innerHTML = `<strong>ID:</strong> Not available`;
+                    }
+                })
+                .catch(error => console.error('Error fetching user info:', error));
+        }
+
+        // Show the profile pop-up
+        profileIcon.addEventListener("click", () => {
+            fetchUserInfo();
+            profilePopup.style.display = profilePopup.style.display === "block" ? "none" : "block";
+        });
+
+        // Close the popup when clicking outside
+        document.addEventListener("click", (event) => {
+            if (!profileIcon.contains(event.target) && !profilePopup.contains(event.target)) {
+                profilePopup.style.display = "none";
+            }
+        });
+
+        // Logout functionality
+        document.getElementById("logout-btn").addEventListener("click", () => {
+            const isConfirmed = confirm("Are you sure want to logout?");
+            if (isConfirmed) {
+                fetch('/logout', { method: 'POST' })
+                    .then(() => {
+                        alert('You have been logged out.');
+                        window.location.href = '/login.html';
+                    })
+                    .catch(error => console.error('Error logging out:', error));
+            }
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const dateInput = document.getElementById("predict-date");
+        const timeInput = document.getElementById("predict-time");
+
+        // Get today's date in local timezone (YYYY-MM-DD format)
+        const today = new Date();
+        const localDate = today.getFullYear() + "-" + String(today.getMonth() + 1).padStart(2, "0") + "-" + 
+                        String(today.getDate()).padStart(2, "0");
+
+        // Set minimum selectable date to today
+        dateInput.min = localDate;
+
+        // Function to update time restrictions
+        function updateTimeRestrictions() {
+            const now = new Date();
+            if (dateInput.value === localDate) {
+                const nextHour = now.getHours() + 1; // Only allow next hour and beyond
+                timeInput.min = String(nextHour).padStart(2, "0") + ":00";
+                timeInput.value = timeInput.min; // Auto-set to the next allowed time
+            } else {
+                timeInput.removeAttribute("min"); // Reset for future dates
+            }
+        }
+
+        // Listen for changes in date selection
+        dateInput.addEventListener("change", updateTimeRestrictions);
+
+        // Ensure time is restricted when the page loads
+        updateTimeRestrictions();
+        
+    });
+
+document.getElementById("predict-time").addEventListener("change", function () {
+    let timeParts = this.value.split(":");
+    this.value = timeParts[0] + ":00"; // Set minutes to "00"
+});
+
+
+</script>
+</body>
+</html>

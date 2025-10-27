@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real-Time Crime Monitoring</title>
+  <link rel="stylesheet" href="CSS_file/monitoring.css">
+  <!-- Bootstrap CSS -->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+
+  <!-- Leaflet Control Geocoder for the search bar -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    
+</head>
+<body>
+    <div id="header">
+        <div class="header-center">
+            GeoCrime Tracker
+        </div>
+        <div class="header-right">
+            <!-- <i class="bi bi-bell-fill"></i> Notification Bell Icon -->
+            <i class="bi bi-person-circle" id="profile-icon"></i> <!-- Profile Icon -->
+        </div>
+    </div>
+    <div class="profile-popup" id="profile-popup">
+        <div class="profile-info">
+            <p id="user-name"><strong>Name:</strong> Loading...</p>
+            <p id="user-id"><strong>ID:</strong> Loading...</p>
+        </div>
+        <button id="logout-btn">Logout</button>
+    </div>
+    
+
+        <!-- Content Wrapper  -->
+        <div class="content">
+            <!-- Sidebar -->
+            <div id="sidebar">
+                <ul>
+                    <li id="CrimeMonitoringbox"><a href="CrimeMonitoring.html">Dashboard</a></li><hr>
+                    <li id="predictiveanalysisbox"><a href="predictiveanalysis.html">Predictive Crime Analysis</a></li><hr>
+                    <li id="hotspotanalysisbox"><a href="hotspotanalysis.html">Crime Hotspot Analysis</a></li><hr>
+                    <li id="criminalpatternbox"><a href="criminalpattern.html">Criminal Behavior Patterns</a></li><hr>
+                    <li id="policeFormbox"><a href="policeForm.html">Register New Crime</a></li>
+                </ul>
+            </div>
+    
+            <!-- Main Content -->
+            <div class="main-content">
+                <h5 class="text"> Real-Time Crime Monitoring <span class="inline-text"> Remaining Crime Verification: <span id="crimeCount">0</span></span> </h5>
+                <!-- Leaflet Map -->
+                <div class="map_app">
+                    <div id="map"></div>
+                    <div class="approval">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    
+
+<script>
+    // Fetch records from the server
+    fetch('/fetch-public-registrations')
+    .then(response => response.json())
+    .then(data => {
+        const approvalContainer = document.querySelector('.approval');
+        
+        data.forEach(record => {
+            // Create a row for each record
+            const recordElement = document.createElement('div');
+            recordElement.classList.add('record');
+            
+
+            // Display location and typeofcrime
+            recordElement.innerHTML = `
+                <p><b>Location:</b> ${record.location}</p>
+                <p><b>Type of Crime:</b> ${record.crime_type}</p>
+                <button class="view-btn" onclick="viewVideo('${record.video}')">View Video</button>
+                <button class="delete-btn" onclick="deleteRecord(${record.id})">Delete</button>
+                <button class="approve-btn" onclick="approveRecord(${record.id})">Approve</button>
+                <button class="view-path-btn" onclick="viewPath(${record.latitude}, ${record.longitude})">View Path</button>
+            `;
+            
+            // Append to the container
+            approvalContainer.appendChild(recordElement);
+        });
+    })
+    .catch(error => {
+        console.error('Error fetching records:', error);
+        alert('Failed to fetch records');
+    });
+
+    // Function to view video
+    
+    function viewVideo(videoFile) {
+        // Open the video file from the 'upload' directory
+        const videoPath = `/uploads/${videoFile}`;
+        window.open(videoPath, '_blank');
+    }
+
+
+    // Function to delete a record
+    function deleteRecord(id) {
+        if (confirm('Are you sure you want to delete this record?')) {
+            fetch(`/delete-record/${id}`, { method: 'DELETE' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Record deleted successfully!');
+                        location.reload(); // Reload the page to update the list
+                    } else {
+                        alert('Failed to delete the record');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting record:', error);
+                });
+        }
+    }
+
+    // Function to approve a record
+    function approveRecord(id) {
+        if (confirm('Are you sure you want to approve this record?')) {
+            fetch(`/approve-record/${id}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Record approved successfully!');
+                        location.reload(); // Reload the page to update the list
+                    } else {
+                        alert('Failed to approve the record');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error approving record:', error);
+                });
+        }
+    }
+
+    function viewPath(crimeLat, crimeLon) {
+        if (!crimeLat || !crimeLon) {
+            console.error("Crime location is undefined!");
+            alert("Crime location is missing!");
+            return;
+        }
+
+        console.log("Searching jurisdiction for crime location:", crimeLat, crimeLon);
+
+        let jurisdictionStation = null;
+        let foundJurisdiction = false;
+
+        geojsonLayer2.eachLayer(layer => {
+            if (!layer.feature || !layer.feature.geometry) {
+                console.warn("Skipping invalid jurisdiction layer:", layer.feature);
+                return;
+            }
+
+            const geometry = layer.feature.geometry;
+            let polygon;
+
+            try {
+                if (geometry.type === "Polygon") {
+                    polygon = L.polygon(geometry.coordinates[0].map(coord => [coord[1], coord[0]]));
+                } else if (geometry.type === "MultiPolygon") {
+                    polygon = L.polygon(
+                        geometry.coordinates.flat(2).map(coord => [coord[1], coord[0]])
+                    );
+                } else {
+                    console.warn("Unknown geometry type:", geometry.type);
+                    return;
+                }
+
+                if (polygon.getBounds().contains(L.latLng(crimeLat, crimeLon))) {
+                    jurisdictionStation = layer.feature.properties.Name || "Unknown Station";
+                    foundJurisdiction = true;
+                }
+            } catch (error) {
+                console.error("Error processing jurisdiction polygon:", error);
+            }
+        });
+
+        if (!foundJurisdiction) {
+            alert("No police jurisdiction found for this crime location.");
+            return;
+        }
+
+        console.log(`Crime falls under jurisdiction of: ${jurisdictionStation}`);
+
+        // Find the nearest police station
+        let nearestStation = null;
+        let minDistance = Infinity;
+
+        geojsonLayer1.eachLayer(layer => {
+            if (!layer.feature || !layer.feature.geometry || !layer.feature.geometry.coordinates) {
+                console.warn("Skipping invalid police station data:", layer.feature);
+                return;
+            }
+
+            const stationCoords = layer.feature.geometry.coordinates;
+            const stationLat = stationCoords[1]; // Latitude
+            const stationLon = stationCoords[0]; // Longitude
+
+            const distance = getDistance(crimeLat, crimeLon, stationLat, stationLon);
+            if (distance < minDistance) {
+                minDistance = distance;
+                nearestStation = { lat: stationLat, lon: stationLon, name: layer.feature.properties.Name };
+            }
+        });
+
+        if (!nearestStation) {
+            alert("No nearest police station found.");
+            return;
+        }
+
+        console.log(`Nearest Police Station: ${nearestStation.name} at (${nearestStation.lat}, ${nearestStation.lon})`);
+
+        // Place a marker for the police station
+        if (window.policeMarker) {
+            map.removeLayer(window.policeMarker);
+        }
+
+        window.policeMarker = L.marker([nearestStation.lat, nearestStation.lon], {
+            icon: L.icon({
+                iconUrl: 'pics/police-station.png', // Police icon
+                iconSize: [32, 32],    // Icon size
+                iconAnchor: [16, 32]
+            })
+        }).addTo(map)
+        .bindPopup(`<b>${nearestStation.name}</b>`)
+        .openPopup();
+
+        // Fetch multiple routes (shortest + alternatives)
+        const osrmRouteUrl = `https://router.project-osrm.org/route/v1/driving/${crimeLon},${crimeLat};${nearestStation.lon},${nearestStation.lat}?alternatives=true&overview=full&geometries=geojson`;
+
+        fetch(osrmRouteUrl)
+            .then(response => response.json())
+            .then(data => {
+                if (data.routes.length === 0) {
+                    alert("No route found.");
+                    return;
+                }
+
+                // Remove existing route layers if any
+                if (window.routeLayers) {
+                    window.routeLayers.forEach(layer => map.removeLayer(layer));
+                }
+                window.routeLayers = [];
+
+                // Loop through all available routes
+                data.routes.forEach((route, index) => {
+                    const routeCoords = route.geometry.coordinates.map(coord => [coord[1], coord[0]]);
+                    const isShortest = index === 0;
+                    const routeDistance = (route.distance / 1000).toFixed(2); // Convert to km
+                    // Convert seconds to minutes and seconds
+                    const totalSeconds = Math.round(route.duration);
+                    const minutes = Math.floor(totalSeconds / 60);
+                    const seconds = totalSeconds % 60;
+                    const routeTime = `${minutes} min ${seconds} sec`;
+
+                    const routeLayer = L.polyline(routeCoords, {
+                        color: isShortest ? 'darkblue' : 'blue', // Dark blue for shortest, light blue for others
+                        weight: isShortest ? 6 : 4, // Make shortest route thicker
+                        opacity: isShortest ? 0.7 : 0.4, // Reduce opacity for alternative routes
+                        // dashArray: isShortest ? null : "5,10" // Dashed lines for alternative routes
+                    }).addTo(map);
+
+                    // Show travel time and distance when clicked
+                    routeLayer.on("click", () => {
+                        L.popup()
+                            .setLatLng(routeCoords[Math.floor(routeCoords.length / 2)]) // Show popup at midpoint
+                            .setContent(`<b>Travel Time:</b> ${routeTime}<br><b>Distance:</b> ${routeDistance} km`)
+                            .openOn(map);
+                    });
+
+                    window.routeLayers.push(routeLayer);
+                });
+
+                // Fit map to the displayed route
+                map.fitBounds(window.routeLayers[0].getBounds());
+
+                alert(`Showing routes from ${nearestStation.name} to Crime location`);
+            })
+            .catch(error => {
+                console.error("Error fetching route:", error);
+                alert("Failed to fetch route.");
+            });
+    }
+
+    // Function to calculate distance between two points
+    function getDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371e3; // Earth radius in meters
+        const φ1 = lat1 * Math.PI / 180;
+        const φ2 = lat2 * Math.PI / 180;
+        const Δφ = (lat2 - lat1) * Math.PI / 180;
+        const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+        const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+                Math.cos(φ1) * Math.cos(φ2) *
+                Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return R * c; // Distance in meters
+    }
+
+
+
+
+    fetch('/crime-count')
+        .then(response => response.json())
+        .then(data => {
+            // Display the count in the span
+            document.getElementById('crimeCount').innerText = data.crimeCount;
+            })
+            .catch(error => {
+                console.error('Error fetching crime count:', error);
+        });
+</script>
+
+
+
+
+
+
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<!-- Leaflet Heatmap Plugin -->
+<script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+
+<!-- Leaflet Control Geocoder for the search bar -->
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+<script>
+    // Initialize the map and set its view
+    var map = L.map('map').setView([19.0760, 72.8777], 11);  // Centered on Mumbai
+
+    // Add OpenStreetMap tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">Brighton</a> contributors'
+    }).addTo(map);
+    //L.marker([19.0760, 72.8777]).addTo(map).bindPopup('Mumbai').openPopup();
+
+    
+
+    // Function to style the GeoJSON layers
+    function style1(feature) {
+        return {
+            color: "#ff7800",
+            
+            weight: 1,
+            opacity: 0.65
+        };
+    }
+
+    function style2(feature) {
+        return {
+            color: "#0057e7",
+            weight: 1,
+            opacity: 0.75
+        };
+    }
+
+
+
+
+
+        // Function to bind popup information for each feature
+    function onEachFeature1(feature, layer) {
+        if (feature.properties && feature.properties.Name) {
+            layer.bindPopup("<strong> Station :</strong> " + feature.properties.Name);
+        } else {
+            console.warn('Feature properties not found for layer 1:', feature);
+        }
+    }
+
+    function onEachFeature2(feature, layer) {
+        if (feature.properties && feature.properties.Name) {
+            layer.bindPopup("<strong> Juridiction :</strong> " + feature.properties.Name);
+        } else {
+            console.warn('Feature properties not found for layer 2:', feature);
+        }
+    }
+    
+
+
+
+
+    // Create a custom icon with a specific color
+    var customIcon = L.icon({
+        iconUrl: 'pics/pin-ezgif.com-gif-maker.gif',  // Path to custom marker icon image
+        iconSize: [36, 36],    // Icon size
+        iconAnchor: [18, 36] // Point where the icon is anchored (center-bottom)
+    });
+
+    // Function to create a custom marker using the custom icon
+    function pointToCustomMarker(latlng, crimeType) {
+        return L.marker(latlng, { icon: customIcon })
+            .bindPopup(`<b>Crime Type:</b> ${crimeType || 'Unknown'}`); // Bind popup with crime type
+    }
+
+
+    // Function to create circle markers for GeoJSON points
+    function pointToCircle(feature, latlng) {
+        return L.circle(latlng, {
+            color: 'red',
+            fillColor: '#f03',
+            fillOpacity: 0.5,
+            radius: 3000 // Adjust the radius as needed
+        }).bindPopup(feature.properties.description); // Bind popup with description
+    }
+
+
+    // Function to create both a custom marker and a circle for the same point
+    function pointToCustomMarkerAndCircle(feature, latlng) {
+        // Create the custom marker
+        var customIcon = L.icon({
+            iconUrl: 'pics/redcrime.png',  // Path to your custom icon
+            iconSize: [20, 20],    // Icon size
+            iconAnchor: [10, 20]    // Adjust the anchor as needed
+        });
+        var marker = L.marker(latlng, { icon: customIcon }).bindPopup(feature.properties.name);
+
+        // Create the circle around the same point
+        var circle = L.circle(latlng, {
+            color: '',
+            fillColor: 'rgb(226, 128, 42)',
+            fillOpacity: 0.5,
+            radius: 1000 // Adjust radius as needed
+        });
+
+        // Add both the marker and the circle to a LayerGroup
+        return L.layerGroup([marker, circle]);
+    }
+
+
+
+
+    // Define GeoJSON layers
+    var geojsonLayer1 = L.geoJSON(null, {
+        style: style1,
+        onEachFeature: onEachFeature1,
+        //pointToLayer: pointToCustomMarker
+    });  // Add layer to map immediately
+
+    var geojsonLayer2 = L.geoJSON(null, {
+        style: style2,
+        onEachFeature: onEachFeature2
+    });  // Add layer to map immediately
+
+    
+
+
+    
+    // Load GeoJSON files and add data to layers
+    fetch('geojson/Point_Police_Station.geojson')
+            .then(response => response.json())
+            .then(data => {
+                geojsonLayer1.addData(data);
+            })
+            .catch(error => console.error('Error loading GeoJSON 1:', error));
+
+    fetch('geojson/Police_Station_Jurdition.geojson')
+            .then(response => response.json())
+            .then(data => {
+                geojsonLayer2.addData(data);
+            })
+            .catch(error => console.error('Error loading GeoJSON 2:', error));
+    
+    fetch('/locations')
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(location => {
+                // Add a marker for each location
+                const marker = pointToCustomMarker([location.latitude, location.longitude], location.crime_type);
+                marker.addTo(map); // Add the custom marker to the map
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching location data:', error);
+    });
+
+    // Add geocoder control (search bar)
+    var geocoder = L.Control.geocoder({
+        defaultMarkGeocode: false  // Do not mark location automatically
+    }).on('markgeocode', function(e) {
+        var bbox = e.geocode.bbox;
+        var poly = L.polygon([
+            [bbox.getSouthEast().lat, bbox.getSouthEast().lng],
+            [bbox.getNorthEast().lat, bbox.getNorthEast().lng],
+            [bbox.getNorthWest().lat, bbox.getNorthWest().lng],
+            [bbox.getSouthWest().lat, bbox.getSouthWest().lng]
+        ]).addTo(map);
+        
+        // Zoom the map to the selected location
+        map.fitBounds(poly.getBounds());
+
+        // Optionally, show a marker at the location
+        var latlng = e.geocode.center;
+        L.marker(latlng).addTo(map)
+            .bindPopup("<strong>Location Found:</strong><br>" + e.geocode.name)
+            .openPopup();
+        }).addTo(map);  // Add the geocoder control to the map
+
+
+    
+
+
+
+
+    // Add base layers to the layer control
+    var baseMaps = {
+        "Police Stations": geojsonLayer1,
+        "Station Jurisdiction": geojsonLayer2,
+        // "Crime": geojsonLayer3 // Initially, this layer will be empty until data is loaded
+    };
+    
+    // Layer control to toggle layers
+    L.control.layers(null, baseMaps).addTo(map);
+
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const profileIcon = document.getElementById("profile-icon");
+        const profilePopup = document.getElementById("profile-popup");
+        const userName = document.getElementById("user-name");
+        const userId = document.getElementById("user-id");
+
+        // Fetch user info from the server
+        function fetchUserInfo() {
+            fetch('/get-user')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.user) {
+                        userName.innerHTML = `<strong>Name:</strong> ${data.user.name}`;
+                        userId.innerHTML = `<strong>ID:</strong> ${data.user.id}`;
+                    } else {
+                        userName.innerHTML = `<strong>Name:</strong> Guest`;
+                        userId.innerHTML = `<strong>ID:</strong> Not available`;
+                    }
+                })
+                .catch(error => console.error('Error fetching user info:', error));
+        }
+
+        // Show the profile pop-up
+        profileIcon.addEventListener("click", () => {
+            fetchUserInfo();
+            profilePopup.style.display = profilePopup.style.display === "block" ? "none" : "block";
+        });
+
+        // Close the popup when clicking outside
+        document.addEventListener("click", (event) => {
+            if (!profileIcon.contains(event.target) && !profilePopup.contains(event.target)) {
+                profilePopup.style.display = "none";
+            }
+        });
+
+        // Logout functionality
+        document.getElementById("logout-btn").addEventListener("click", () => {
+            const isConfirmed = confirm("Are you sure want to logout?");
+            if (isConfirmed) {
+                fetch('/logout', { method: 'POST' })
+                    .then(() => {
+                        alert('You have been logged out.');
+                        window.location.href = '/login.html';
+                    })
+                    .catch(error => console.error('Error logging out:', error));
+            }
+        });
+    });
+
+</script>
+</body>
+</html>

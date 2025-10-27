@@ -1,0 +1,273 @@
+/* General Body Styling */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column; /* Makes content flow vertically */
+    height: 100vh; /* Full viewport height */
+    background-color: #909294 !important;;
+}
+
+/* Header */
+#header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #343a40; /* Dark background */
+    color: #fff; /* White text color */
+    padding: 10px 30px;
+    position: sticky;
+    top: 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    z-index: 1000;
+    height: 60px;
+    width: 100%; /* Ensure header takes full width */
+    
+}
+
+/* Center section (GeoCrime text) */
+.header-center {
+    flex-grow: 1;
+    text-align: center;
+    font-size: 26px;
+    font-weight: bold;
+    font-family: 'Arial', sans-serif;
+    letter-spacing: 1px;
+}
+
+/* Right section (icons) */
+.header-right {
+    display: flex;
+    align-items: center;
+}
+
+.header-right i {
+    font-size: 28px;
+    margin-left: 25px; /* Space between icons */
+    cursor: pointer;
+    color: #fff;
+}
+
+.header-right i:hover {
+    font-size: 28px;
+    color: #909294; /* Change color on hover */
+    transition: color 0.3s ease;
+}
+
+/* Content Wrapper  */
+.content {
+    display: flex;
+    flex-grow: 1; /* Takes remaining height after the header */
+    margin-top: 2px; /* Offset content from header */
+}
+
+
+/* Sidebar Styling */
+#sidebar {
+    width: 160px;
+    background: #343a40;
+    padding: 5px;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
+    overflow-y: auto;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    margin-bottom: 5px;
+}
+
+#sidebar hr {
+    background-color: #909294;
+    height: 1px;
+    margin: 5px;
+}
+
+#sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+#sidebar ul li {
+    padding: 8px 8px;
+    border-radius: 8px;
+    transition: background 0.3s ease, color 0.3s ease;
+    text-align: center;
+}
+
+#sidebar ul li:hover {
+    background: #909294;
+    /* color: #fff;  */
+}
+
+
+#hotspotanalysisbox {
+    background: #909294;
+    /* color: #fff;  */
+}
+
+#sidebar ul li a {
+    text-decoration: none;
+    color: #ffffff;
+    display: block;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+#sidebar ul li a:hover {
+    color: #060606;
+}
+
+/* Main Content Area */
+.main-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Take up the remaining space after the sidebar */
+    padding: 5px;
+    padding-top: 5px;
+
+    
+    
+}
+
+/* CSS to align the title and filters in the same line */
+#filter-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 5px;
+    padding-bottom: 5px;
+    padding-top: 0px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#filters {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-wrap: wrap; /* Adjusts layout if it overflows */
+}
+
+
+#filters label,
+#filters select,
+#filters input,
+#filters button {
+    display: inline-block;
+    margin: 0;
+    padding: 2px;
+}
+
+#filters button {
+    display: inline-block;
+    margin-right: 3px;
+    margin-left: 12px;
+    padding: 5px;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+
+#filters label {
+    display: block;
+    /* margin-bottom: 5px; */
+    font-weight: bold;
+    font-size: 17px;
+    margin-left: 7px;
+}
+
+
+input[type="date"],
+select{
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Ensures padding is included in the width */
+}
+
+input[type="date"]:focus,
+select:focus {
+    border-color: #007BFF; /* Change border color on focus */
+    outline: none; /* Remove default outline */
+}
+
+#btn-flt {
+    padding: 5px;
+    transition: background 0.3s;
+    background-color: #007bff;
+    border: none;
+    color: #fff;
+    font-size: 19px;
+    cursor: pointer;
+    font-weight: 600;
+    border-radius: 5px;
+    margin-right: 20px;
+}
+
+#btn-flt:hover {
+    background-color: #0056b3;
+}
+
+/* Responsive design for sidebar */
+@media (max-width: 768px) {
+    #sidebar {
+        width: 30%; /* Full width on smaller screens */
+        min-width: min-content;
+        padding: 15px;
+    }
+}
+
+/* Custom styling for the MAP */
+#map {
+    flex-grow: 1;
+    width: 100%;
+    border-radius: 8px;
+}
+
+/* Footer */
+.footer {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    font-size: 0.9em;
+}
+
+
+#profile-popup {
+    display: none;
+    position: absolute;
+    top: 12px;
+    right: 65px;
+    /* width: 265px; */
+    text-align: left;
+    background-color: #fff;
+    padding: 10px;
+    padding-top: 0px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.profile-info p {
+    margin: 5px 0;
+}
+
+#logout-btn {
+    text-align: center;
+    background-color: #c82333; /* Red background */
+    padding: 10px 15px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #ffffff;
+    font-weight: 600;
+    margin-top: 5px;
+    width: 100%;
+}
+
+#logout-btn:hover {
+    background-color: #940a17; /* Darker red on hover */
+}
+

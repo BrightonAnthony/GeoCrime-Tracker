@@ -1,0 +1,364 @@
+/* General Body Styling */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column; /* Makes content flow vertically */
+    height: 100vh; /* Full viewport height */
+    background-color: #909294 !important;;
+}
+
+/* Header */
+#header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #343a40; /* Dark background */
+    color: #fff; /* White text color */
+    padding: 10px 30px;
+    position: sticky;
+    top: 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    z-index: 1000;
+    height: 60px;
+    width: 100%; /* Ensure header takes full width */
+    
+}
+
+/* Center section (GeoCrime text) */
+.header-center {
+    flex-grow: 1;
+    text-align: center;
+    font-size: 26px;
+    font-weight: bold;
+    font-family: 'Arial', sans-serif;
+    letter-spacing: 1px;
+}
+
+/* Right section (icons) */
+.header-right {
+    display: flex;
+    align-items: center;
+}
+
+.header-right i {
+    font-size: 28px;
+    margin-left: 25px; /* Space between icons */
+    cursor: pointer;
+    color: #fff;
+}
+
+.header-right i:hover {
+    font-size: 28px;
+    color: #909294; /* Change color on hover */
+    transition: color 0.3s ease;
+}
+
+/* Content Wrapper  */
+.content {
+    display: flex;
+    flex-grow: 1; /* Takes remaining height after the header */
+    margin-top: 2px; /* Offset content from header */
+}
+
+
+/* Sidebar Styling */
+#sidebar {
+    width: 160px;
+    background: #343a40;
+    padding: 5px;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.15);
+    overflow-y: auto;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    margin-bottom: 5px;
+}
+
+#sidebar hr {
+    background-color: #909294;
+    height: 1px;
+    margin: 5px;
+}
+
+#sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+#sidebar ul li {
+    padding: 8px 8px;
+    border-radius: 8px;
+    transition: background 0.3s ease, color 0.3s ease;
+    text-align: center;
+}
+
+#sidebar ul li:hover {
+    background: #909294;
+    /* color: #fff;  */
+}
+
+#policeFormbox {
+    background: #909294;
+    /* color: #fff;  */
+}
+
+#sidebar ul li a {
+    text-decoration: none;
+    color: #ffffff;
+    display: block;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+#sidebar ul li a:hover {
+    color: #060606;
+}
+
+
+/* Main Policelog Area (Fixed Position Above UI) */
+/* Main Policelog Area (Fixed and Draggable) */
+#policelog {
+    position: fixed;
+    top: 120px;
+    left: 220px;
+    width: 450px;
+    height: 490px;
+    background-color: #444;
+    padding: 10px;
+    padding-top: 2px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.25);
+    z-index: 2000;
+    overflow-y: auto;
+    border-radius: 8px;
+    opacity: 0.95;
+    resize: both; /* Allow users to resize the box */
+    cursor: default; /* Indicates that the element is draggable */
+}
+
+/* Draggable handle (you can make the entire header draggable or a specific part of the #policelog) */
+#policelog-header {
+    background-color: #444;
+    color: white;
+    padding: 2px;
+    cursor: move; /* Cursor to indicate it's draggable */
+    font-size: 30px;
+    text-align: center;
+    border-radius: 8px 8px 0 0;
+}
+
+/* Ensure the rest of the content stays interactive */
+.content, .main-content, #map {
+    position: relative;
+    z-index: 1;
+}
+
+/* Header */
+#header {
+    z-index: 3000;
+}
+
+/* Optional: Adjust the height of the map or form to avoid overlap with the log */
+#map {
+    margin-right: 400px;  /* Adds margin to ensure map doesn't sit directly behind the policelog */
+}
+
+
+
+/* Main Content Area */
+.main-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Take up the remaining space after the sidebar */
+    padding: 5px;
+    padding-top: 10px;
+    
+}
+
+/* Responsive design for sidebar */
+@media (max-width: 768px) {
+    #sidebar {
+        /* min-width: auto; */
+        width: 20%;
+        min-width: min-content;
+        padding: 15px;
+    }
+    #policelog {
+        top: 109px;
+        left: 180px;
+        width: 270px;
+        height: 490px;
+    }
+}
+
+/* Custom styling for the MAP */
+#map {
+    flex-grow: 1;
+    width: 100%;
+    border-radius: 8px;
+}
+
+/* Footer */
+.footer {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    font-size: 0.9em;
+}
+
+
+/* Styles for the form elements */
+.container {
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 600px;
+    height: auto;
+    margin: auto;
+    overflow-y: auto;
+}
+
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+#policelog label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+#policelog input[type="text"],
+#policelog input[type="number"],
+input[type="date"],
+input[type="time"],
+input[type="tel"],
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Ensures padding is included in the width */
+}
+
+#policelog input[type="text"]:focus,
+#policelog input[type="number"]:focus,
+input[type="date"]:focus,
+input[type="time"]:focus,
+input[type="tel"]:focus,
+select:focus,
+textarea:focus {
+    border-color: #007BFF; /* Change border color on focus */
+    outline: none; /* Remove default outline */
+}
+
+fieldset {
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 15px; /* Space between fieldsets */
+}
+
+summary {
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 10px;
+    color: #555; /* Color for the summary title */
+}
+
+summary:hover {
+    text-decoration: none; /* Underline effect on hover */
+    color: #007BFF;
+}
+
+#check-criminal-btn {
+    background-color: #555;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%; /* Full width */
+    font-size: 16px;
+}
+
+#check-criminal-btn:hover {
+    background-color: #3479c2; /* Darker blue on hover */
+    color: white;
+    font-weight: bold;
+}
+
+#btn {
+    background-color: #555;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%; /* Full width */
+    font-size: 16px;
+}
+
+#btn:hover {
+    background-color: #3479c2; /* Darker blue on hover */
+    color: white;
+    font-weight: bold;
+}
+
+.a4-preview {
+    width: 50mm; /* A4 width */
+    height: 50mm; /* A4 height */
+    border: 2px solid #ccc; /* Optional border for visualization */
+    margin: 20px auto; /* Center alignment */
+    overflow: hidden; /* Ensure content fits */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.a4-preview img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+#profile-popup {
+    display: none;
+    position: absolute;
+    top: 12px;
+    right: 65px;
+    /* width: 265px; */
+    text-align: left;
+    background-color: #fff;
+    padding: 10px;
+    padding-top: 0px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 3001;
+}
+
+.profile-info p {
+    margin: 5px 0;
+}
+
+#logout-btn {
+    text-align: center;
+    background-color: #c82333; /* Red background */
+    padding: 10px 15px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #ffffff;
+    font-weight: 600;
+    margin-top: 5px;
+    width: 100%;
+}
+
+#logout-btn:hover {
+    background-color: #940a17; /* Darker red on hover */
+}
+

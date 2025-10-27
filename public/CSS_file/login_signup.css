@@ -1,0 +1,168 @@
+body {
+    font-family: Arial, sans-serif;
+    /* background-color: #65a3e6; */
+    background-image: url("/pics/360_F_554053185_2fWwExa3uyXMxlhp1FDc4kgEjv1FA2W2.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+
+.container {
+    width: 400px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    opacity: 70%;
+}
+
+/* index */
+.container-ind{
+    width: 400px;
+    background-color: #000000;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    opacity: 73%;
+    text-align: center;
+    color: white;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+#bt-ind{
+    padding: 15px 15px;
+    font-size: 20px;
+    margin: 20px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    transition: background 0.3s;
+    color: black;
+    font-weight: 600;
+} 
+
+#bt-ind:hover {
+    background: #007BFF;
+    color: white;
+}
+/* index */
+
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    padding-right: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+.switch-link {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+}
+
+.switch-link a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.switch-link a:hover {
+    text-decoration: underline;
+}
+
+#loginpasswordcont{
+    margin-bottom: 3px;
+}
+
+#forgotpasswordcont {
+    display: block;
+    text-align: right;
+    margin-top: 3px;
+    margin-bottom: 20px;
+}
+
+#forgotpassword{
+    color: #3c3e40;
+    text-decoration: none;
+}
+
+#forgotpassword:hover{
+    color: #000000;
+    text-decoration: underline;
+}
+
+#send-otp-btn{
+    padding: 5px 10px;
+    margin-top: 5px;
+    background-color: #2c772f;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+#send-otp-btn:hover {
+    background-color: #126015;
+    color: white;
+    font-weight: bold;
+}
+
+#verify-otp-btn{
+    padding: 5px 10px;
+    margin-top: 5px;
+    background-color: #c82333;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+#verify-otp-btn:hover {
+    background-color: #930e1b;
+    color: white;
+    font-weight: bold;
+}

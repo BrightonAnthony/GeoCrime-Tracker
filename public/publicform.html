@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crime Report</title>
+    <link href="CSS_file/publicform.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container" id="polog-container">
+    <h2>Crime Report</h2>
+    <form id="crimeForm" method="POST" action="/submit-crime" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="polog-pname"> Name</label>
+            <input type="text" id="polog-pname" placeholder="Enter your Name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="polog-phoneNo">Phone No</label>
+            <input type="number" id="polog-phoneNo" placeholder="Enter the Phone No" required>
+            <button id="otp-btn" type="button" >Get OTP</button>
+        </div>
+        <div class="form-group">
+            <label for="polog-otp">OTP</label>
+            <input type="number" id="polog-otp" placeholder="Enter the OTP" disabled required>
+            <button id="verify-otp-btn" type="button" disabled >Verify OTP</button>
+        </div>
+        
+
+        <div class="form-group">
+            <label for="polog-crimetype">Crime Type</label>
+            <select id="polog-crimetype" required>
+                <option value="">Select Type of Crime</option>
+                <option value="theft">Theft</option>
+                <option value="assault">Assault</option>
+                <option value="burglary">Burglary</option>
+                <option value="fraud">Fraud</option>
+                <option value="murder">Murder</option>
+                <option value="vandalism">Vandalism</option>
+                <option value="drugOffense">Drug Offense</option>
+                <option value="domesticViolence">Domestic Violence</option>
+            </select>
+        </div>
+        
+        
+        <div class="form-group">
+            <label for="polog-video">Video</label>
+            <input type="file" id="polog-video" accept="video/*" capture="environment" required>
+        </div>
+
+        <button id="retryLocation" style="display: none;">Retry Location</button>
+
+        <div class="form-group">
+            <label for="latitude"></label >
+            <input type="text" id="latitude" name="latitude" readonly hidden>
+        </div>
+        <div class="form-group">
+            <label for="longitude"></label>
+            <input type="text" id="longitude" name="longitude" readonly hidden>
+        </div>
+        <div class="form-group">
+            <label for="polog-date">Date</label>
+            <input type="date" id="polog-date" required readonly>
+        </div>
+        <div class="form-group">
+            <label for="polog-time">Time</label>
+            <input type="time" id="polog-time" required readonly>
+        </div>
+        <div class="form-group">
+            <label for="address">Address</label>
+            <input type="text" id="address" name="address" readonly>
+        </div>
+
+        <button type="submit" id="sendButton" class="btn" >Send</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById('polog-video').addEventListener('change', function () {
+    gatherLocationData();
+    });
+
+    document.getElementById('retryLocation').addEventListener('click', function (event) {
+    event.preventDefault(); // Prevent default behavior (if inside a form)
+    gatherLocationData();
+    });
+
+
+    function gatherLocationData() {
+        // Disable the send button
+        const sendButton = document.getElementById('sendButton');
+        sendButton.disabled = true;
+
+        // Set temporary fetching messages
+        document.getElementById('polog-date').value = 'Fetching...';
+        document.getElementById('polog-time').value = 'Fetching...';
+        document.getElementById('address').value = 'Fetching address...';
+
+        // Check if browser supports Geolocation
+        if (navigator.geolocation) {
+            // Get the current position
+            navigator.geolocation.getCurrentPosition(function (position) {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+
+                // Set latitude and longitude to form fields
+                document.getElementById('latitude').value = latitude;
+                document.getElementById('longitude').value = longitude;
+
+                // Reverse Geocode: Convert Lat/Lng to address using OpenStreetMap Nominatim API
+                const apiUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
+
+                fetch(apiUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data && data.display_name) {
+                            // Set the address field in the form
+                            document.getElementById('address').value = data.display_name;
+                            // Enable the send button once address is fetched
+                            sendButton.disabled = false;
+                        } else {
+                            document.getElementById('address').value = 'Address not found';
+                        }
+                    })
+                    .catch(error => {
+                        document.getElementById('address').value = 'Error fetching address';
+                        alert('Error fetching address: ' + error.message);
+                    });
+
+                // Set the current date and time in their respective fields
+                const now = new Date();
+                document.getElementById('polog-date').value = now.toISOString().split('T')[0]; // YYYY-MM-DD
+                document.getElementById('polog-time').value = now.toTimeString().split(' ')[0]; // HH:MM:SS
+
+                // Hide the retry button if location is fetched successfully
+                document.getElementById('retryLocation').style.display = 'none';
+            }, function (error) {
+                alert('Please enable your device location\n and click "Retry Location"');
+                // Show the retry button if location fetch fails
+                document.getElementById('retryLocation').style.display = 'inline-block';
+
+                // Reset fetching text to empty if location fetch fails
+                document.getElementById('polog-date').value = '';
+                document.getElementById('polog-time').value = '';
+                document.getElementById('address').value = '';
+                // Keep the send button disabled if location fetch fails
+                sendButton.disabled = true;
+            });
+        } else {
+            alert('Geolocation is not supported by this browser.');
+            document.getElementById('polog-date').value = '';
+            document.getElementById('polog-time').value = '';
+            document.getElementById('address').value = '';
+            // Keep the send button disabled
+            sendButton.disabled = true;
+        }
+    }
+</script>
+<script>
+    document.getElementById('crimeForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+    
+    if (!isOtpVerified) {
+        alert('Please verify OTP before submitting the form.');
+        event.preventDefault(); // Stop form submission
+        return;
+    }
+
+    const sendButton = document.getElementById('sendButton');
+
+    // Disable the button to prevent multiple submissions
+    sendButton.disabled = true;
+    sendButton.innerText = 'Sending...';
+
+    // Create a FormData object to send file and other form data
+    const formData = new FormData();
+    formData.append('name', document.getElementById('polog-pname').value);
+    formData.append('phoneNo', document.getElementById('polog-phoneNo').value);
+    formData.append('crimeType', document.getElementById('polog-crimetype').value);
+    formData.append('video', document.getElementById('polog-video').files[0]); // File upload
+    formData.append('latitude', document.getElementById('latitude').value);
+    formData.append('longitude', document.getElementById('longitude').value);
+    formData.append('date', document.getElementById('polog-date').value);
+    formData.append('time', document.getElementById('polog-time').value);
+    formData.append('address', document.getElementById('address').value);
+
+    // Send form data to the server using fetch
+    fetch('/submit-crime', {
+        method: 'POST',
+        body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Crime reported successfully!');
+            window.location.href = '/publicform.html'; // Redirect on success
+        } else {
+            alert('Error reporting crime: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+    })
+    .finally(() => {
+        // Re-enable the button after response or error
+        sendButton.disabled = false;
+        sendButton.innerText = 'Send';
+    });
+});
+
+</script>
+<script>
+    let isOtpVerified = false; // Flag to track OTP verification status
+
+    document.getElementById('otp-btn').addEventListener('click', function () {
+        const phoneNo = document.getElementById('polog-phoneNo').value;
+
+        if (!phoneNo) {
+            alert('Please enter your phone number.');
+            return;
+        }
+        if (phoneNo.length!=10) {
+            alert('Please enter valid phone number.');
+            return;
+        }
+
+        fetch('/generate-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phoneNo })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    document.getElementById('polog-phoneNo').disabled = true;
+                    document.getElementById('otp-btn').disabled = true;
+                    document.getElementById('polog-otp').disabled = false; // Enable OTP field
+                    document.getElementById('verify-otp-btn').disabled = false; // Enable Verify button
+                } else {
+                    alert('Cannot send messages to unverified numbers: ' + data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
+
+    document.getElementById('verify-otp-btn').addEventListener('click', function () {
+        
+        const phoneNo = document.getElementById('polog-phoneNo').value;
+        const otp = document.getElementById('polog-otp').value;
+
+
+        if (!otp) {
+            alert('Please enter the OTP.');
+            return;
+        }
+
+        fetch('/verify-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phoneNo, otp })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    document.getElementById('verify-otp-btn').disabled = true;
+                    document.getElementById('polog-otp').disabled = true;
+                    isOtpVerified = true; // Mark OTP as verified
+                } else {
+                    alert('OTP verification failed: ' + data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
+
+</script>
+</body>
+</html>

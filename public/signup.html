@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup Page</title>
+    <link href="CSS_file/login_signup.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Signup Form -->
+    <div class="container" id="signup-container">
+        <h2>SIGN UP</h2>
+        <form id="signupForm" method="POST">
+            <div class="form-group">
+                <label for="signup-name">Full Name</label>
+                <input type="text" id="signup-name" name="name" placeholder="Enter your name" required>
+            </div>
+            <div class="form-group">
+                <label for="signup-email">Email</label>
+                <input type="email" id="signup-email" name="email" placeholder="Enter your email" required>
+                <button type="button" id="send-otp-btn">Send OTP</button>
+            </div>
+            <div class="form-group">
+                <label for="signup-otp">OTP</label>
+                <input type="number" id="signup-otp" name="signupotp" placeholder="Enter OTP" required disabled>
+                <button type="button" id="verify-otp-btn" disabled>Verify OTP</button>
+            </div>
+            <div class="form-group">
+                <label for="signup-password">Password</label>
+                <input type="password" id="signup-password" name="password" placeholder="Create a password" required>
+            </div>
+            <div class="form-group">
+                <label for="signup-confirm-password">Confirm Password</label>
+                <input type="password" id="signup-confirm-password" name="confirm_password" placeholder="Confirm your password" required>
+            </div>
+            <button type="submit" class="btn">Sign Up</button>
+            <div class="switch-link">
+                Already have an account? <a href="login.html">Login</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Function to validate email format
+        function validateEmail(email) {
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return emailPattern.test(email);
+        }
+
+        // Function to validate password complexity
+        function validatePassword(password) {
+            const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,}$/;
+            if (!passwordPattern.test(password)) {
+                const message = `
+                Password must meet the following criteria:
+                • At least 8 characters.
+                • At least 1 uppercase letter.
+                • At least 1 lowercase letter.
+                • At least 1 number.
+                • At least 1 special character.
+                `;
+                alert(message);
+                return false;
+            }
+            return true;
+        }
+
+        // Function to handle signup form submission
+        function submitSignupForm(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const signupotp = document.getElementById('signup-otp').value;
+            const password = document.getElementById('signup-password').value;
+            const confirm_password = document.getElementById('signup-confirm-password').value;
+
+            if(signupotp.length==0){
+                alert('Please enter the OTP.');
+                return;
+            }
+
+            // Validation: Password should be at least 8 characters and contain at least 1 uppercase, 1 lowercase, and 1 number
+            if (!validatePassword(password)) {
+                return;
+            }
+
+            // Validation: Check if email is valid
+            if (!validateEmail(email)) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+
+            // Validation: Check if passwords match
+            if (password !== confirm_password) {
+                alert('Passwords do not match.');
+                return;
+            }
+
+            // Make a POST request to the signup route
+            fetch('/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, email, password, confirm_password }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'User registered successfully!') {
+                    alert(data.message);  // Show success alert
+                    window.location.href = data.redirect;  // Redirect to login page after success
+                } else {
+                    alert(data.message);  // Show error message in an alert
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
+        }
+
+        // Attach the function to the form's submit event
+        document.getElementById('signupForm').addEventListener('submit', submitSignupForm);
+    </script>
+    <script>
+        document.getElementById('send-otp-btn').addEventListener('click', function () {
+            const email = document.getElementById('signup-email').value;
+
+            if (!email) {
+                alert('Please enter your email.');
+                return;
+            }
+
+            fetch('/send-signup-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    document.getElementById('signup-email').disabled = true; // Disable email field
+                    document.getElementById('send-otp-btn').disabled = true; // Disable OTP button
+                    document.getElementById('signup-otp').disabled = false; // Enable OTP input
+                    document.getElementById('verify-otp-btn').disabled = false; // Enable Verify OTP button
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+
+        document.getElementById('verify-otp-btn').addEventListener('click', function () {
+            const email = document.getElementById('signup-email').value;
+            const otp = document.getElementById('signup-otp').value;
+
+            if (!otp) {
+                alert('Please enter the OTP.');
+                return;
+            }
+
+            fetch('/verify-signup-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, otp })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    document.getElementById('verify-otp-btn').disabled = true; // Disable verify button
+                    document.getElementById('signup-otp').disabled = true; // Disable OTP input
+                } else {
+                    alert('OTP verification failed: ' + data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
